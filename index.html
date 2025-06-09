@@ -9,15 +9,15 @@
             background-color: #111;
             color: #eee;
             text-align: center;
-            padding: 50px;
+            padding: 20px;
         }
         h1 {
             font-size: 3em;
             margin-bottom: 20px;
         }
         button {
-            font-size: 1.5em;
-            padding: 15px 30px;
+            font-size: 1.2em;
+            padding: 10px 20px;
             margin: 10px;
             cursor: pointer;
             border: none;
@@ -29,13 +29,50 @@
         button:hover {
             background-color: #666;
         }
+        #pages img {
+            width: 90%;
+            max-width: 800px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 0 10px #000;
+        }
     </style>
 </head>
 <body>
     <h1>🌟 مهرقان الروح 🌟</h1>
     <p>اختر الفصل:</p>
-    <button onclick="window.open('https://raw.githubusercontent.com/shahe0/mehreqan-al-rooh/main/manga.json', '_blank')">📖 البداية</button>
-    <button onclick="window.open('https://raw.githubusercontent.com/shahe0/mehreqan-al-rooh/main/manga.json', '_blank')">📖 الحاضر</button>
-    <p style="margin-top: 50px; font-size: 0.9em;">© مهرقان الروح</p>
+    <div id="chapters"></div>
+    <hr style="margin: 30px 0;">
+    <div id="pages"></div>
+
+    <script>
+        const mangaUrl = 'https://raw.githubusercontent.com/shahe0/mehreqan-al-rooh/main/manga.json';
+
+        fetch(mangaUrl)
+            .then(response => response.json())
+            .then(data => {
+                const chaptersDiv = document.getElementById('chapters');
+                const pagesDiv = document.getElementById('pages');
+
+                for (const [chapterNum, chapterData] of Object.entries(data.chapters)) {
+                    const btn = document.createElement('button');
+                    btn.textContent = `${chapterData.title}`;
+                    btn.onclick = () => {
+                        pagesDiv.innerHTML = '';
+                        chapterData.pages.forEach(pageUrl => {
+                            const img = document.createElement('img');
+                            img.src = pageUrl;
+                            pagesDiv.appendChild(img);
+                        });
+                        window.scrollTo({ top: pagesDiv.offsetTop, behavior: 'smooth' });
+                    };
+                    chaptersDiv.appendChild(btn);
+                }
+            })
+            .catch(error => {
+                console.error('خطأ في تحميل البيانات:', error);
+                document.body.innerHTML = '<p>فشل تحميل الرواية. تأكد من وجود ملف manga.json بشكل صحيح.</p>';
+            });
+    </script>
 </body>
 </html>
