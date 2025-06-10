@@ -1,120 +1,184 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>مهرقان الروح</title>
-    <style>
-        body {
-            background-color: #111;
-            color: #fff;
-            font-family: sans-serif;
-            margin: 0;
-            padding: 0;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>مهرقان الروح</title>
 
-        .navbar {
-            background-color: #222;
-            padding: 10px;
-            position: sticky;
-            top: 0;
-            z-index: 999;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            border-bottom: 2px solid #444;
-        }
+  <style>
+    /* Toolbar styles */
+    .toolbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 50px;
+      background: rgba(0, 0, 0, 0.85);
+      color: white;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      z-index: 1000;
+      font-family: sans-serif;
+    }
 
-        .navbar a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: bold;
-            transition: color 0.2s ease;
-        }
+    .toolbar button {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 18px;
+      margin: 0 5px;
+      cursor: pointer;
+    }
 
-        .navbar a:hover {
-            color: #1e90ff;
-        }
+    .toolbar button:hover {
+      color: #ddd;
+    }
 
-        .chapter {
-            padding: 20px;
-            max-width: 1000px;
-            margin: auto;
-        }
+    .toolbar .title {
+      flex-grow: 1;
+      text-align: center;
+      font-weight: bold;
+      font-size: 16px;
+    }
 
-        .chapter h2 {
-            margin-top: 50px;
-            border-bottom: 2px solid #444;
-            padding-bottom: 10px;
-        }
+    .nav {
+      display: flex;
+      align-items: center;
+    }
 
-        img {
-            image-rendering: auto;
-            max-width: 100%;
-            height: auto;
-            transition: transform 0.2s ease;
-            cursor: zoom-in;
-            margin-bottom: 10px;
-        }
+    .nav button, .nav span {
+      font-size: 16px;
+      margin: 0 3px;
+    }
 
-        img.zoomed {
-            transform: scale(2);
-            cursor: zoom-out;
-        }
-    </style>
+    /* Image container */
+    .img-container {
+      margin-top: 60px; /* space for toolbar */
+      text-align: center;
+    }
+
+    .img-container img {
+      max-width: 100%;
+      height: auto;
+      transition: transform 0.3s ease;
+      transform-origin: center center;
+      cursor: zoom-in;
+    }
+
+    /* Zoomed state */
+    .img-container.zoomed img {
+      transform: scale(1.5);
+      cursor: zoom-out;
+    }
+
+    /* Cinema mode */
+    .cinema-mode .toolbar,
+    .cinema-mode .nav {
+      display: none;
+    }
+
+    .cinema-mode .img-container {
+      margin-top: 0;
+      background-color: black;
+    }
+  </style>
 </head>
+
 <body>
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <button id="close">✖</button>
+    <span class="title">مهرقان الروح</span>
+    <button id="download">⬇</button>
+    <button id="link">🔗</button>
+    <button id="share">➡</button>
 
-    <div class="navbar">
-        <a href="#chapter1">الفصل 1 - البداية</a>
-        <a href="#chapter2">الفصل 2 - الحاضر</a>
+    <div class="nav">
+      <button id="prev">⟨</button>
+      <span id="page">1</span>
+      <button id="next">⟩</button>
     </div>
 
-    <div class="chapter" id="chapter1">
-        <h2>الفصل 1 - البداية</h2>
+    <button id="fullscreen">⛶</button>
+    <button id="flip">↔</button>
+    <button id="cinema">🎬</button>
+    <button id="settings">⚙</button>
+  </div>
 
-        <img src="https://i.imgur.com/MfRP2zF.jpeg" alt="">
-        <img src="https://i.imgur.com/jXJed1O.jpeg" alt="">
-        <img src="https://i.imgur.com/Rr2cvhD.jpeg" alt="">
-        <img src="https://i.imgur.com/EtI9RUf.jpeg" alt="">
-        <img src="https://i.imgur.com/a1irBKf.jpeg" alt="">
-        <img src="https://i.imgur.com/iRn9rVc.jpeg" alt="">
-        <img src="https://i.imgur.com/9YKPzIe.jpeg" alt="">
-        <img src="https://i.imgur.com/uAk0X9R.jpeg" alt="">
-        <img src="https://i.imgur.com/vPpeTUL.jpeg" alt="">
-        <img src="https://i.imgur.com/YCWwQIJ.jpeg" alt="">
-        <img src="https://i.imgur.com/iaYmgn0.jpeg" alt="">
-        <img src="https://i.imgur.com/5zTPYdi.jpeg" alt="">
-        <img src="https://i.imgur.com/Wlz5Yt5.jpeg" alt="">
-        <img src="https://i.imgur.com/Q51pmoW.jpeg" alt="">
-        <img src="https://i.imgur.com/LkoiQqV.jpeg" alt="">
-        <img src="https://i.imgur.com/4GfjEpp.jpeg" alt="">
-        <img src="https://i.imgur.com/6P2DShC.jpeg" alt="">
-    </div>
+  <!-- Image container -->
+  <div class="img-container">
+    <img src="YOUR_IMAGE_LINK_HERE" alt="Page 1" id="main-image" />
+  </div>
 
-    <div class="chapter" id="chapter2">
-        <h2>الفصل 2 - الحاضر</h2>
+  <!-- JavaScript -->
+  <script>
+    // Fullscreen
+    document.getElementById("fullscreen").addEventListener("click", function() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    });
 
-        <img src="https://i.imgur.com/OhcccCm.jpeg" alt="">
-        <img src="https://i.imgur.com/m2hxsXt.jpeg" alt="">
-        <img src="https://i.imgur.com/SyU97bd.jpeg" alt="">
-        <img src="https://i.imgur.com/mEc5sDJ.jpeg" alt="">
-        <img src="https://i.imgur.com/v6C7p62.jpeg" alt="">
-        <img src="https://i.imgur.com/kl4oFgz.jpeg" alt="">
-        <img src="https://i.imgur.com/0xUABI0.jpeg" alt="">
-        <img src="https://i.imgur.com/4jESiCg.jpeg" alt="">
-        <img src="https://i.imgur.com/YstsoGo.jpeg" alt="">
-        <img src="https://i.imgur.com/XmDZBi6.jpeg" alt="">
-        <img src="https://i.imgur.com/C9FtlXQ.jpeg" alt="">
-    </div>
+    // Zoom toggle
+    let zoomed = false;
+    document.getElementById("main-image").addEventListener("click", function() {
+      zoomed = !zoomed;
+      document.querySelector(".img-container").classList.toggle("zoomed", zoomed);
+    });
 
-    <script>
-        document.querySelectorAll('img').forEach(img => {
-            img.addEventListener('click', () => {
-                img.classList.toggle('zoomed');
-            });
-        });
-    </script>
+    // Flip image
+    let flipped = false;
+    document.getElementById("flip").addEventListener("click", function() {
+      flipped = !flipped;
+      document.getElementById("main-image").style.transform = flipped ? "scaleX(-1)" : "scaleX(1)";
+    });
 
+    // Cinema mode
+    document.getElementById("cinema").addEventListener("click", function() {
+      document.body.classList.toggle("cinema-mode");
+    });
+
+    // Close button (reload page)
+    document.getElementById("close").addEventListener("click", function() {
+      location.reload();
+    });
+
+    // Dummy prev/next (you can later hook this to your chapters/pages)
+    document.getElementById("prev").addEventListener("click", function() {
+      alert("Previous page clicked");
+    });
+
+    document.getElementById("next").addEventListener("click", function() {
+      alert("Next page clicked");
+    });
+
+    // Download button
+    document.getElementById("download").addEventListener("click", function() {
+      const link = document.createElement('a');
+      link.href = document.getElementById("main-image").src;
+      link.download = 'page.jpg';
+      link.click();
+    });
+
+    // Link button
+    document.getElementById("link").addEventListener("click", function() {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        alert("Link copied!");
+      });
+    });
+
+    // Share button (basic)
+    document.getElementById("share").addEventListener("click", function() {
+      alert("Share feature coming soon!");
+    });
+
+    // Settings button
+    document.getElementById("settings").addEventListener("click", function() {
+      alert("Settings coming soon!");
+    });
+  </script>
 </body>
 </html>
