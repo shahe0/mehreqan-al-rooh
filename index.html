@@ -7,220 +7,101 @@
   <style>
     body {
       background-color: #222;
-      color: #fff;
+      color: white;
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
       text-align: center;
     }
-
-    .controls {
-      position: fixed;
-      top: 10px;
-      left: 10px;
-      z-index: 999;
-      background: rgba(34,34,34,0.95);
+    h1, h2 {
+      margin: 20px 0;
+    }
+    #chapterSelect {
+      margin-bottom: 20px;
       padding: 10px;
-      border-radius: 8px;
-      max-width: 300px;
+      font-size: 16px;
     }
-
-    button, select, input[type=range], label {
-      padding: 8px;
-      margin: 5px 0;
-      font-size: 14px;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
     .image-container {
-      max-width: 100%;
-      margin-top: 150px;
-      padding-bottom: 100px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 50px;
     }
-
-    img {
-      display: block;
-      margin: 0 auto 20px;
-      max-width: 100%;
+    .image-container img {
+      width: 100%;
+      max-width: 600px;
       height: auto;
-    }
-
-    .settings-toggle, .toggle-pages {
-      position: fixed;
-      bottom: 20px;
-      z-index: 1000;
-      background: #444;
-      color: #fff;
-      border: none;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      font-size: 20px;
-      cursor: pointer;
-    }
-
-    .settings-toggle {
-      left: 20px;
-    }
-
-    .toggle-pages {
-      right: 20px;
-    }
-
-    .hidden {
-      display: none;
+      border-radius: 4px;
     }
   </style>
 </head>
 <body>
-  <button class="settings-toggle" onclick="toggleSettings()">⚙️</button>
-  <button class="toggle-pages" onclick="togglePages()">📄</button>
-
-  <div class="controls hidden" id="settingsPanel">
-    <h3>الإعدادات</h3>
-    <label>عرض الصفحة:</label>
-    <select onchange="setFit(this.value)">
-      <option value="original">1:1 الحجم الأصلي</option>
-      <option value="width">العرض</option>
-      <option value="height">الارتفاع</option>
-    </select>
-    <label>تمديد:</label>
-    <select onchange="setStretch(this.value)">
-      <option value="none">بدون</option>
-      <option value="width">تمديد العرض</option>
-      <option value="height">تمديد الارتفاع</option>
-    </select>
-    <label>أقصى عرض للصفحة:</label>
-    <input type="range" id="widthSlider" min="10" max="100" value="100" oninput="adjustMaxWidth(this.value)">
-    <label><input type="checkbox" id="removeGaps" checked onchange="toggleGaps(this.checked)"> إزالة الفراغات</label>
-    <button onclick="toggleFullScreen()">ملء الشاشة</button>
-    <select id="chapterSelect" onchange="changeChapter(this.value)">
-      <option value="1">الفصل 1 - البداية</option>
-      <option value="2">الفصل 2 - الحاضر</option>
-    </select>
-  </div>
-
   <h1>📖 مهرقان الروح 📖</h1>
-  <h2 id="chapterTitle"></h2>
+  <h2 id="chapterTitle">الفصل الأول (البداية)</h2>
+
+  <select id="chapterSelect" onchange="changeChapter(this.value)">
+    <option value="1">الفصل الأول (البداية)</option>
+    <option value="2">الفصل الثاني (الحاضر)</option>
+  </select>
+
   <div class="image-container" id="imageContainer"></div>
 
   <script>
     const chapters = {
-      "1": {
-        cover: "https://i.imgur.com/a1irBKf.jpeg",
-        pages: [
-          "https://i.imgur.com/MfRP2zF.jpeg",
-          "https://i.imgur.com/jXJed1O.jpeg",
-          "https://i.imgur.com/Rr2cvhD.jpeg",
-          "https://i.imgur.com/EtI9RUf.jpeg",
-          "https://i.imgur.com/a1irBKf.jpeg",
-          "https://i.imgur.com/iRn9rVc.jpeg",
-          "https://i.imgur.com/9YKPzIe.jpeg",
-          "https://i.imgur.com/uAk0X9R.jpeg",
-          "https://i.imgur.com/vPpeTUL.jpeg",
-          "https://i.imgur.com/YCWwQIJ.jpeg",
-          "https://i.imgur.com/iaYmgn0.jpeg",
-          "https://i.imgur.com/5zTPYdi.jpeg",
-          "https://i.imgur.com/Wlz5Yt5.jpeg",
-          "https://i.imgur.com/Q51pmoW.jpeg",
-          "https://i.imgur.com/LkoiQqV.jpeg",
-          "https://i.imgur.com/4GfjEpp.jpeg",
-          "https://i.imgur.com/6P2DShC.jpeg"
-        ]
-      },
-      "2": {
-        cover: "https://i.imgur.com/OhcccCm.jpeg",
-        pages: [
-          "https://i.imgur.com/OhcccCm.jpeg",
-          "https://i.imgur.com/m2hxsXt.jpeg",
-          "https://i.imgur.com/SyU97bd.jpeg",
-          "https://i.imgur.com/mEc5sDJ.jpeg",
-          "https://i.imgur.com/v6C7p62.jpeg",
-          "https://i.imgur.com/kl4oFgz.jpeg",
-          "https://i.imgur.com/0xUABI0.jpeg",
-          "https://i.imgur.com/4jESiCg.jpeg",
-          "https://i.imgur.com/YstsoGo.jpeg",
-          "https://i.imgur.com/XmDZBi6.jpeg",
-          "https://i.imgur.com/C9FtlXQ.jpeg"
-        ]
-      }
+      "1": [
+        "https://i.imgur.com/MfRP2zF.jpeg",
+        "https://i.imgur.com/jXJed1O.jpeg",
+        "https://i.imgur.com/Rr2cvhD.jpeg",
+        "https://i.imgur.com/EtI9RUf.jpeg",
+        "https://i.imgur.com/a1irBKf.jpeg",
+        "https://i.imgur.com/iRn9rVc.jpeg",
+        "https://i.imgur.com/9YKPzIe.jpeg",
+        "https://i.imgur.com/uAk0X9R.jpeg",
+        "https://i.imgur.com/vPpeTUL.jpeg",
+        "https://i.imgur.com/YCWwQIJ.jpeg",
+        "https://i.imgur.com/iaYmgn0.jpeg",
+        "https://i.imgur.com/5zTPYdi.jpeg",
+        "https://i.imgur.com/Wlz5Yt5.jpeg",
+        "https://i.imgur.com/Q51pmoW.jpeg",
+        "https://i.imgur.com/LkoiQqV.jpeg",
+        "https://i.imgur.com/4GfjEpp.jpeg",
+        "https://i.imgur.com/6P2DShC.jpeg"
+      ],
+      "2": [
+        "https://i.imgur.com/m2hxsXt.jpeg",
+        "https://i.imgur.com/SyU97bd.jpeg",
+        "https://i.imgur.com/mEc5sDJ.jpeg",
+        "https://i.imgur.com/v6C7p62.jpeg",
+        "https://i.imgur.com/kl4oFgz.jpeg",
+        "https://i.imgur.com/0xUABI0.jpeg",
+        "https://i.imgur.com/4jESiCg.jpeg",
+        "https://i.imgur.com/YstsoGo.jpeg",
+        "https://i.imgur.com/XmDZBi6.jpeg",
+        "https://i.imgur.com/C9FtlXQ.jpeg"
+      ]
     };
 
-    let currentZoom = 1;
-    let maxWidthPercent = 100;
-    let stretchMode = "none";
-    let showAllPages = false;
-    const imageContainer = document.getElementById("imageContainer");
-    const chapterSelect = document.getElementById("chapterSelect");
-    const chapterTitle = document.getElementById("chapterTitle");
-
-    function toggleSettings() {
-      document.getElementById("settingsPanel").classList.toggle("hidden");
-    }
-
-    function togglePages() {
-      showAllPages = !showAllPages;
-      loadChapter(chapterSelect.value);
-    }
-
-    function loadChapter(chapterNum) {
-      imageContainer.innerHTML = "";
-      chapterTitle.innerText = chapterSelect.options[chapterSelect.selectedIndex].text;
-
-      const chapter = chapters[chapterNum];
-      const urls = showAllPages ? [chapter.cover, ...chapter.pages] : [chapter.cover];
-
-      urls.forEach(url => {
+    function loadChapter(num) {
+      const container = document.getElementById("imageContainer");
+      container.innerHTML = "";
+      const chapterTitle = document.getElementById("chapterTitle");
+      chapterTitle.innerText = num === "1" ? "الفصل الأول (البداية)" : "الفصل الثاني (الحاضر)";
+      chapters[num].forEach(src => {
         const img = document.createElement("img");
-        img.src = url;
-        img.alt = "صفحة";
-        img.style.maxWidth = `${maxWidthPercent}%`;
-        imageContainer.appendChild(img);
+        img.src = src;
+        container.appendChild(img);
       });
+      window.scrollTo(0, 0); // يرجع لأعلى الصفحة
     }
 
-    function toggleFullScreen() {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-      } else {
-        document.exitFullscreen();
-      }
+    function changeChapter(val) {
+      loadChapter(val);
     }
 
-    function setFit(value) {
-      maxWidthPercent = (value === "height") ? 80 : 100;
-      loadChapter(chapterSelect.value);
-    }
-
-    function adjustMaxWidth(val) {
-      maxWidthPercent = val;
-      const imgs = document.querySelectorAll(".image-container img");
-      imgs.forEach(img => img.style.maxWidth = `${val}%`);
-    }
-
-    function setStretch(mode) {
-      stretchMode = mode;
-      const imgs = document.querySelectorAll(".image-container img");
-      imgs.forEach(img => {
-        img.style.width = "auto";
-        img.style.height = "auto";
-        if (mode === "width") img.style.width = "100%";
-        if (mode === "height") img.style.height = "100vh";
-      });
-    }
-
-    function toggleGaps(enable) {
-      imageContainer.style.gap = enable ? "0" : "20px";
-    }
-
-    function changeChapter(chapterNum) {
-      currentZoom = 1;
-      showAllPages = false;
-      loadChapter(chapterNum);
-    }
-
-    loadChapter("1");
+    window.onload = () => {
+      loadChapter("1");
+    };
   </script>
 </body>
 </html>
