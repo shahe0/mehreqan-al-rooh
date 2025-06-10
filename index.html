@@ -6,7 +6,7 @@
     <title>مهرقان الروح</title>
     <style>
         body {
-            background-color: #222; /* رمادي غامق */
+            background-color: #222;
             color: #fff;
             font-family: Arial, sans-serif;
             margin: 0;
@@ -18,8 +18,11 @@
             top: 10px;
             left: 10px;
             z-index: 999;
+            background: rgba(34,34,34,0.9);
+            padding: 10px;
+            border-radius: 8px;
         }
-        button {
+        button, select {
             padding: 10px;
             margin: 5px;
             font-size: 16px;
@@ -29,13 +32,15 @@
             max-width: 100%;
             max-height: 100%;
             overflow: auto;
+            margin-top: 100px;
         }
         img {
             display: block;
-            max-width: 100%;
-            margin: 10px auto;
+            margin: 20px auto;
             transition: transform 0.2s ease;
             cursor: zoom-in;
+            max-width: 100%;
+            height: auto;
         }
     </style>
 </head>
@@ -45,61 +50,79 @@
         <button onclick="toggleFullScreen()">ملء الشاشة</button>
         <button onclick="zoomIn()">تكبير</button>
         <button onclick="zoomOut()">تصغير</button>
-        <button onclick="resetZoom()">إعادة</button>
+        <button onclick="fitToScreen()">ملائمة الشاشة</button>
+        <select id="chapterSelect" onchange="changeChapter(this.value)">
+            <option value="1">الفصل 1 - البداية</option>
+            <option value="2">الفصل 2 - الحاضر</option>
+        </select>
     </div>
 
     <h1>📖 مهرقان الروح 📖</h1>
-    <h2 id="chapterTitle">الفصل 1 - البداية</h2>
+    <h2 id="chapterTitle"></h2>
 
     <div class="image-container" id="imageContainer"></div>
 
     <script>
         const chapters = {
-            "1": [
-                "https://i.imgur.com/MfRP2zF.jpeg",
-                "https://i.imgur.com/jXJed1O.jpeg",
-                "https://i.imgur.com/Rr2cvhD.jpeg",
-                "https://i.imgur.com/EtI9RUf.jpeg",
-                "https://i.imgur.com/a1irBKf.jpeg",
-                "https://i.imgur.com/iRn9rVc.jpeg",
-                "https://i.imgur.com/9YKPzIe.jpeg",
-                "https://i.imgur.com/uAk0X9R.jpeg",
-                "https://i.imgur.com/vPpeTUL.jpeg",
-                "https://i.imgur.com/YCWwQIJ.jpeg",
-                "https://i.imgur.com/iaYmgn0.jpeg",
-                "https://i.imgur.com/5zTPYdi.jpeg",
-                "https://i.imgur.com/Wlz5Yt5.jpeg",
-                "https://i.imgur.com/Q51pmoW.jpeg",
-                "https://i.imgur.com/LkoiQqV.jpeg",
-                "https://i.imgur.com/4GfjEpp.jpeg",
-                "https://i.imgur.com/6P2DShC.jpeg"
-            ],
-            "2": [
-                "https://i.imgur.com/OhcccCm.jpeg",
-                "https://i.imgur.com/m2hxsXt.jpeg",
-                "https://i.imgur.com/SyU97bd.jpeg",
-                "https://i.imgur.com/mEc5sDJ.jpeg",
-                "https://i.imgur.com/v6C7p62.jpeg",
-                "https://i.imgur.com/kl4oFgz.jpeg",
-                "https://i.imgur.com/0xUABI0.jpeg",
-                "https://i.imgur.com/4jESiCg.jpeg",
-                "https://i.imgur.com/YstsoGo.jpeg",
-                "https://i.imgur.com/XmDZBi6.jpeg",
-                "https://i.imgur.com/C9FtlXQ.jpeg"
-            ]
+            "1": {
+                cover: "https://i.imgur.com/a1irBKf.jpeg",
+                pages: [
+                    "https://i.imgur.com/MfRP2zF.jpeg",
+                    "https://i.imgur.com/jXJed1O.jpeg",
+                    "https://i.imgur.com/Rr2cvhD.jpeg",
+                    "https://i.imgur.com/EtI9RUf.jpeg",
+                    "https://i.imgur.com/a1irBKf.jpeg",
+                    "https://i.imgur.com/iRn9rVc.jpeg",
+                    "https://i.imgur.com/9YKPzIe.jpeg",
+                    "https://i.imgur.com/uAk0X9R.jpeg",
+                    "https://i.imgur.com/vPpeTUL.jpeg",
+                    "https://i.imgur.com/YCWwQIJ.jpeg",
+                    "https://i.imgur.com/iaYmgn0.jpeg",
+                    "https://i.imgur.com/5zTPYdi.jpeg",
+                    "https://i.imgur.com/Wlz5Yt5.jpeg",
+                    "https://i.imgur.com/Q51pmoW.jpeg",
+                    "https://i.imgur.com/LkoiQqV.jpeg",
+                    "https://i.imgur.com/4GfjEpp.jpeg",
+                    "https://i.imgur.com/6P2DShC.jpeg"
+                ]
+            },
+            "2": {
+                cover: "https://i.imgur.com/OhcccCm.jpeg",
+                pages: [
+                    "https://i.imgur.com/OhcccCm.jpeg",
+                    "https://i.imgur.com/m2hxsXt.jpeg",
+                    "https://i.imgur.com/SyU97bd.jpeg",
+                    "https://i.imgur.com/mEc5sDJ.jpeg",
+                    "https://i.imgur.com/v6C7p62.jpeg",
+                    "https://i.imgur.com/kl4oFgz.jpeg",
+                    "https://i.imgur.com/0xUABI0.jpeg",
+                    "https://i.imgur.com/4jESiCg.jpeg",
+                    "https://i.imgur.com/YstsoGo.jpeg",
+                    "https://i.imgur.com/XmDZBi6.jpeg",
+                    "https://i.imgur.com/C9FtlXQ.jpeg"
+                ]
+            }
         };
 
         const chapterTitle = document.getElementById("chapterTitle");
         const imageContainer = document.getElementById("imageContainer");
-        let currentZoom = 1;
+        const chapterSelect = document.getElementById("chapterSelect");
 
-        // تحميل الفصل 1 كبداية
-        loadChapter("1");
+        let currentZoom = 1;
 
         function loadChapter(chapterNum) {
             imageContainer.innerHTML = "";
-            chapterTitle.innerText = `الفصل ${chapterNum} - ${chapterNum === "1" ? "البداية" : "الحاضر"}`;
-            chapters[chapterNum].forEach(url => {
+            chapterTitle.innerText = chapterSelect.options[chapterSelect.selectedIndex].text;
+            
+            // Add cover first
+            const coverImg = document.createElement("img");
+            coverImg.src = chapters[chapterNum].cover;
+            coverImg.alt = `غلاف الفصل ${chapterNum}`;
+            coverImg.style.transform = `scale(${currentZoom})`;
+            imageContainer.appendChild(coverImg);
+
+            // Add pages
+            chapters[chapterNum].pages.forEach(url => {
                 const img = document.createElement("img");
                 img.src = url;
                 img.alt = `صفحة`;
@@ -126,17 +149,25 @@
             updateZoom();
         }
 
-        function resetZoom() {
+        function fitToScreen() {
             currentZoom = 1;
             updateZoom();
         }
 
         function updateZoom() {
-            const images = document.querySelectorAll("img");
+            const images = document.querySelectorAll(".image-container img");
             images.forEach(img => {
                 img.style.transform = `scale(${currentZoom})`;
             });
         }
+
+        function changeChapter(chapterNum) {
+            currentZoom = 1;
+            loadChapter(chapterNum);
+        }
+
+        // Load default chapter
+        loadChapter("1");
     </script>
 
 </body>
