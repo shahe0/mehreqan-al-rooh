@@ -1,173 +1,157 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>مهرقان الروح</title>
-    <style>
-        body {
-            background-color: #222;
-            color: #fff;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            text-align: center;
-        }
-        .controls {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            z-index: 999;
-            background: rgba(34,34,34,0.9);
-            padding: 10px;
-            border-radius: 8px;
-        }
-        button, select {
-            padding: 10px;
-            margin: 5px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        .image-container {
-            max-width: 100%;
-            overflow-x: hidden;
-            margin-top: 100px;
-        }
-        img {
-            display: block;
-            margin: 20px auto;
-            transition: transform 0.2s ease;
-            cursor: zoom-in;
-            max-width: 100%;
-            height: auto;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>مهرقان الروح</title>
+  <style>
+    body {
+      background-color: #222;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    .controls {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 999;
+      background: rgba(34,34,34,0.95);
+      padding: 10px;
+      border-radius: 8px;
+      max-width: 300px;
+      display: none;
+    }
+    .controls.show {
+      display: block;
+    }
+    button, select, input[type=range], label {
+      padding: 8px;
+      margin: 5px 0;
+      font-size: 14px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .image-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 100px;
+      gap: 10px;
+      padding-bottom: 100px;
+    }
+    .image-container img {
+      max-width: 95%;
+      height: auto;
+      border-radius: 8px;
+    }
+    .settings-toggle {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      z-index: 1000;
+      background: #444;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 20px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
+  <button class="settings-toggle" onclick="toggleSettings()">⚙️</button>
+  <div class="controls" id="settingsPanel">
+    <h3>الإعدادات</h3>
+    <label>الفصل:</label>
+    <select id="chapterSelect" onchange="changeChapter(this.value)">
+      <option value="1">الفصل 1 - البداية</option>
+      <option value="2">الفصل 2 - الحاضر</option>
+    </select>
+    <button onclick="toggleFullScreen()">ملء الشاشة</button>
+  </div>
 
-    <div class="controls">
-        <button onclick="toggleFullScreen()">ملء الشاشة</button>
-        <button onclick="zoomIn()">تكبير</button>
-        <button onclick="zoomOut()">تصغير</button>
-        <button onclick="fitToScreen()">ملائمة الشاشة</button>
-        <select id="chapterSelect" onchange="changeChapter(this.value)">
-            <option value="1">الفصل 1 - البداية</option>
-            <option value="2">الفصل 2 - الحاضر</option>
-        </select>
-    </div>
+  <h1>📖 مهرقان الروح 📖</h1>
+  <h2 id="chapterTitle"></h2>
+  <div class="image-container" id="imageContainer"></div>
 
-    <h1>📖 مهرقان الروح 📖</h1>
-    <h2 id="chapterTitle"></h2>
+  <script>
+    const chapters = {
+      "1": {
+        title: "الفصل 1 - البداية",
+        pages: [
+          "https://i.imgur.com/MfRP2zF.jpeg",
+          "https://i.imgur.com/jXJed1O.jpeg",
+          "https://i.imgur.com/Rr2cvhD.jpeg",
+          "https://i.imgur.com/EtI9RUf.jpeg",
+          "https://i.imgur.com/a1irBKf.jpeg",
+          "https://i.imgur.com/iRn9rVc.jpeg",
+          "https://i.imgur.com/9YKPzIe.jpeg",
+          "https://i.imgur.com/uAk0X9R.jpeg",
+          "https://i.imgur.com/vPpeTUL.jpeg",
+          "https://i.imgur.com/YCWwQIJ.jpeg",
+          "https://i.imgur.com/iaYmgn0.jpeg",
+          "https://i.imgur.com/5zTPYdi.jpeg",
+          "https://i.imgur.com/Wlz5Yt5.jpeg",
+          "https://i.imgur.com/Q51pmoW.jpeg",
+          "https://i.imgur.com/LkoiQqV.jpeg",
+          "https://i.imgur.com/4GfjEpp.jpeg",
+          "https://i.imgur.com/6P2DShC.jpeg"
+        ]
+      },
+      "2": {
+        title: "الفصل 2 - الحاضر",
+        pages: [
+          "https://i.imgur.com/OhcccCm.jpeg",
+          "https://i.imgur.com/m2hxsXt.jpeg",
+          "https://i.imgur.com/SyU97bd.jpeg",
+          "https://i.imgur.com/mEc5sDJ.jpeg",
+          "https://i.imgur.com/v6C7p62.jpeg",
+          "https://i.imgur.com/kl4oFgz.jpeg",
+          "https://i.imgur.com/0xUABI0.jpeg",
+          "https://i.imgur.com/4jESiCg.jpeg",
+          "https://i.imgur.com/YstsoGo.jpeg",
+          "https://i.imgur.com/XmDZBi6.jpeg",
+          "https://i.imgur.com/C9FtlXQ.jpeg"
+        ]
+      }
+    };
 
-    <div class="image-container" id="imageContainer"></div>
+    const imageContainer = document.getElementById("imageContainer");
+    const chapterTitle = document.getElementById("chapterTitle");
+    const chapterSelect = document.getElementById("chapterSelect");
+    const settingsPanel = document.getElementById("settingsPanel");
 
-    <script>
-        const chapters = {
-            "1": {
-                cover: "https://i.imgur.com/a1irBKf.jpeg",
-                pages: [
-                    "https://i.imgur.com/MfRP2zF.jpeg",
-                    "https://i.imgur.com/jXJed1O.jpeg",
-                    "https://i.imgur.com/Rr2cvhD.jpeg",
-                    "https://i.imgur.com/EtI9RUf.jpeg",
-                    "https://i.imgur.com/a1irBKf.jpeg",
-                    "https://i.imgur.com/iRn9rVc.jpeg",
-                    "https://i.imgur.com/9YKPzIe.jpeg",
-                    "https://i.imgur.com/uAk0X9R.jpeg",
-                    "https://i.imgur.com/vPpeTUL.jpeg",
-                    "https://i.imgur.com/YCWwQIJ.jpeg",
-                    "https://i.imgur.com/iaYmgn0.jpeg",
-                    "https://i.imgur.com/5zTPYdi.jpeg",
-                    "https://i.imgur.com/Wlz5Yt5.jpeg",
-                    "https://i.imgur.com/Q51pmoW.jpeg",
-                    "https://i.imgur.com/LkoiQqV.jpeg",
-                    "https://i.imgur.com/4GfjEpp.jpeg",
-                    "https://i.imgur.com/6P2DShC.jpeg"
-                ]
-            },
-            "2": {
-                cover: "https://i.imgur.com/OhcccCm.jpeg",
-                pages: [
-                    "https://i.imgur.com/OhcccCm.jpeg",
-                    "https://i.imgur.com/m2hxsXt.jpeg",
-                    "https://i.imgur.com/SyU97bd.jpeg",
-                    "https://i.imgur.com/mEc5sDJ.jpeg",
-                    "https://i.imgur.com/v6C7p62.jpeg",
-                    "https://i.imgur.com/kl4oFgz.jpeg",
-                    "https://i.imgur.com/0xUABI0.jpeg",
-                    "https://i.imgur.com/4jESiCg.jpeg",
-                    "https://i.imgur.com/YstsoGo.jpeg",
-                    "https://i.imgur.com/XmDZBi6.jpeg",
-                    "https://i.imgur.com/C9FtlXQ.jpeg"
-                ]
-            }
-        };
+    function toggleSettings() {
+      settingsPanel.classList.toggle("show");
+    }
 
-        const chapterTitle = document.getElementById("chapterTitle");
-        const imageContainer = document.getElementById("imageContainer");
-        const chapterSelect = document.getElementById("chapterSelect");
+    function changeChapter(num) {
+      const chapter = chapters[num];
+      chapterTitle.innerText = chapter.title;
+      imageContainer.innerHTML = "";
+      chapter.pages.forEach(src => {
+        const img = document.createElement("img");
+        img.src = src;
+        img.alt = "صفحة";
+        imageContainer.appendChild(img);
+      });
+    }
 
-        let currentZoom = 1;
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    }
 
-        function loadChapter(chapterNum) {
-            imageContainer.innerHTML = "";
-            chapterTitle.innerText = chapterSelect.options[chapterSelect.selectedIndex].text;
-
-            // Add cover first
-            const coverImg = document.createElement("img");
-            coverImg.src = chapters[chapterNum].cover;
-            coverImg.alt = `غلاف الفصل ${chapterNum}`;
-            coverImg.style.transform = `scale(${currentZoom})`;
-            imageContainer.appendChild(coverImg);
-
-            // Add pages
-            chapters[chapterNum].pages.forEach(url => {
-                const img = document.createElement("img");
-                img.src = url;
-                img.alt = `صفحة`;
-                img.style.transform = `scale(${currentZoom})`;
-                imageContainer.appendChild(img);
-            });
-        }
-
-        function toggleFullScreen() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen();
-            } else {
-                document.exitFullscreen();
-            }
-        }
-
-        function zoomIn() {
-            currentZoom += 0.1;
-            updateZoom();
-        }
-
-        function zoomOut() {
-            currentZoom = Math.max(0.5, currentZoom - 0.1);
-            updateZoom();
-        }
-
-        function fitToScreen() {
-            currentZoom = 1;
-            updateZoom();
-        }
-
-        function updateZoom() {
-            const images = document.querySelectorAll(".image-container img");
-            images.forEach(img => {
-                img.style.transform = `scale(${currentZoom})`;
-            });
-        }
-
-        function changeChapter(chapterNum) {
-            currentZoom = 1;
-            loadChapter(chapterNum);
-        }
-
-        // Load default chapter
-        loadChapter("1");
-    </script>
-
+    // تحميل الفصل الأول تلقائيًا
+    changeChapter("1");
+  </script>
 </body>
 </html>
