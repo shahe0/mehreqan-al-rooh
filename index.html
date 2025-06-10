@@ -13,6 +13,7 @@
       padding: 0;
       text-align: center;
     }
+
     .controls {
       position: fixed;
       top: 10px;
@@ -22,11 +23,8 @@
       padding: 10px;
       border-radius: 8px;
       max-width: 300px;
-      display: none;
     }
-    .controls.show {
-      display: block;
-    }
+
     button, select, input[type=range], label {
       padding: 8px;
       margin: 5px 0;
@@ -34,23 +32,23 @@
       width: 100%;
       box-sizing: border-box;
     }
+
     .image-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 100px;
-      gap: 10px;
+      max-width: 100%;
+      margin-top: 150px;
       padding-bottom: 100px;
     }
-    .image-container img {
-      max-width: 95%;
+
+    img {
+      display: block;
+      margin: 0 auto 20px;
+      max-width: 100%;
       height: auto;
-      border-radius: 8px;
     }
-    .settings-toggle {
+
+    .settings-toggle, .toggle-pages {
       position: fixed;
       bottom: 20px;
-      left: 20px;
       z-index: 1000;
       background: #444;
       color: #fff;
@@ -61,18 +59,46 @@
       font-size: 20px;
       cursor: pointer;
     }
+
+    .settings-toggle {
+      left: 20px;
+    }
+
+    .toggle-pages {
+      right: 20px;
+    }
+
+    .hidden {
+      display: none;
+    }
   </style>
 </head>
 <body>
   <button class="settings-toggle" onclick="toggleSettings()">⚙️</button>
-  <div class="controls" id="settingsPanel">
+  <button class="toggle-pages" onclick="togglePages()">📄</button>
+
+  <div class="controls hidden" id="settingsPanel">
     <h3>الإعدادات</h3>
-    <label>الفصل:</label>
+    <label>عرض الصفحة:</label>
+    <select onchange="setFit(this.value)">
+      <option value="original">1:1 الحجم الأصلي</option>
+      <option value="width">العرض</option>
+      <option value="height">الارتفاع</option>
+    </select>
+    <label>تمديد:</label>
+    <select onchange="setStretch(this.value)">
+      <option value="none">بدون</option>
+      <option value="width">تمديد العرض</option>
+      <option value="height">تمديد الارتفاع</option>
+    </select>
+    <label>أقصى عرض للصفحة:</label>
+    <input type="range" id="widthSlider" min="10" max="100" value="100" oninput="adjustMaxWidth(this.value)">
+    <label><input type="checkbox" id="removeGaps" checked onchange="toggleGaps(this.checked)"> إزالة الفراغات</label>
+    <button onclick="toggleFullScreen()">ملء الشاشة</button>
     <select id="chapterSelect" onchange="changeChapter(this.value)">
       <option value="1">الفصل 1 - البداية</option>
       <option value="2">الفصل 2 - الحاضر</option>
     </select>
-    <button onclick="toggleFullScreen()">ملء الشاشة</button>
   </div>
 
   <h1>📖 مهرقان الروح 📖</h1>
@@ -82,7 +108,7 @@
   <script>
     const chapters = {
       "1": {
-        title: "الفصل 1 - البداية",
+        cover: "https://i.imgur.com/a1irBKf.jpeg",
         pages: [
           "https://i.imgur.com/MfRP2zF.jpeg",
           "https://i.imgur.com/jXJed1O.jpeg",
@@ -104,7 +130,7 @@
         ]
       },
       "2": {
-        title: "الفصل 2 - الحاضر",
+        cover: "https://i.imgur.com/OhcccCm.jpeg",
         pages: [
           "https://i.imgur.com/OhcccCm.jpeg",
           "https://i.imgur.com/m2hxsXt.jpeg",
@@ -121,23 +147,35 @@
       }
     };
 
+    let currentZoom = 1;
+    let maxWidthPercent = 100;
+    let stretchMode = "none";
+    let showAllPages = false;
     const imageContainer = document.getElementById("imageContainer");
-    const chapterTitle = document.getElementById("chapterTitle");
     const chapterSelect = document.getElementById("chapterSelect");
-    const settingsPanel = document.getElementById("settingsPanel");
+    const chapterTitle = document.getElementById("chapterTitle");
 
     function toggleSettings() {
-      settingsPanel.classList.toggle("show");
+      document.getElementById("settingsPanel").classList.toggle("hidden");
     }
 
-    function changeChapter(num) {
-      const chapter = chapters[num];
-      chapterTitle.innerText = chapter.title;
+    function togglePages() {
+      showAllPages = !showAllPages;
+      loadChapter(chapterSelect.value);
+    }
+
+    function loadChapter(chapterNum) {
       imageContainer.innerHTML = "";
-      chapter.pages.forEach(src => {
+      chapterTitle.innerText = chapterSelect.options[chapterSelect.selectedIndex].text;
+
+      const chapter = chapters[chapterNum];
+      const urls = showAllPages ? [chapter.cover, ...chapter.pages] : [chapter.cover];
+
+      urls.forEach(url => {
         const img = document.createElement("img");
-        img.src = src;
+        img.src = url;
         img.alt = "صفحة";
+        img.style.maxWidth = `${maxWidthPercent}%`;
         imageContainer.appendChild(img);
       });
     }
@@ -150,8 +188,39 @@
       }
     }
 
-    // تحميل الفصل الأول تلقائيًا
-    changeChapter("1");
+    function setFit(value) {
+      maxWidthPercent = (value === "height") ? 80 : 100;
+      loadChapter(chapterSelect.value);
+    }
+
+    function adjustMaxWidth(val) {
+      maxWidthPercent = val;
+      const imgs = document.querySelectorAll(".image-container img");
+      imgs.forEach(img => img.style.maxWidth = `${val}%`);
+    }
+
+    function setStretch(mode) {
+      stretchMode = mode;
+      const imgs = document.querySelectorAll(".image-container img");
+      imgs.forEach(img => {
+        img.style.width = "auto";
+        img.style.height = "auto";
+        if (mode === "width") img.style.width = "100%";
+        if (mode === "height") img.style.height = "100vh";
+      });
+    }
+
+    function toggleGaps(enable) {
+      imageContainer.style.gap = enable ? "0" : "20px";
+    }
+
+    function changeChapter(chapterNum) {
+      currentZoom = 1;
+      showAllPages = false;
+      loadChapter(chapterNum);
+    }
+
+    loadChapter("1");
   </script>
 </body>
 </html>
