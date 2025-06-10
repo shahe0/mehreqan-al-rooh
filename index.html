@@ -2,158 +2,142 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>مهرقان الروح</title>
     <style>
         body {
-            margin: 0;
-            background-color: #1e1e1e;
-            color: #f0f0f0;
-            font-family: sans-serif;
-        }
-
-        header {
-            background-color: #2c2c2c;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 20px;
-        }
-
-        select {
-            background-color: #444;
-            color: #f0f0f0;
-            border: none;
-            padding: 8px;
-            font-size: 16px;
-        }
-
-        .image-container {
-            max-width: 1000px;
-            margin: 20px auto;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            padding: 0 10px;
-        }
-
-        .image-container img {
-            width: 100%;
-            height: auto;
-            transition: transform 0.3s ease;
-            cursor: zoom-in;
-        }
-
-        .fullscreen-button {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            background-color: #444;
+            background-color: #222; /* رمادي غامق */
             color: #fff;
-            border: none;
-            padding: 10px 15px;
-            font-size: 14px;
-            cursor: pointer;
-            z-index: 1000;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
         }
-
-        .fullscreen-button:hover {
-            background-color: #666;
+        .controls {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 999;
+        }
+        button {
+            padding: 10px;
+            margin: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .image-container {
+            max-width: 100%;
+            max-height: 100%;
+            overflow: auto;
+        }
+        img {
+            display: block;
+            max-width: 100%;
+            margin: 10px auto;
+            transition: transform 0.2s ease;
+            cursor: zoom-in;
         }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>مهرقان الروح</h1>
-    <select id="chapterSelector">
-        <option value="1">البداية</option>
-        <option value="2">الحاضر</option>
-    </select>
-</header>
+    <div class="controls">
+        <button onclick="toggleFullScreen()">ملء الشاشة</button>
+        <button onclick="zoomIn()">تكبير</button>
+        <button onclick="zoomOut()">تصغير</button>
+        <button onclick="resetZoom()">إعادة</button>
+    </div>
 
-<button class="fullscreen-button" onclick="toggleFullScreen()">ملء الشاشة</button>
+    <h1>📖 مهرقان الروح 📖</h1>
+    <h2 id="chapterTitle">الفصل 1 - البداية</h2>
 
-<div id="images" class="image-container"></div>
+    <div class="image-container" id="imageContainer"></div>
 
-<script>
-    const chapters = {
-        "1": [
-            "https://i.imgur.com/MfRP2zF.jpeg",
-            "https://i.imgur.com/jXJed1O.jpeg",
-            "https://i.imgur.com/Rr2cvhD.jpeg",
-            "https://i.imgur.com/EtI9RUf.jpeg",
-            "https://i.imgur.com/a1irBKf.jpeg",
-            "https://i.imgur.com/iRn9rVc.jpeg",
-            "https://i.imgur.com/9YKPzIe.jpeg",
-            "https://i.imgur.com/uAk0X9R.jpeg",
-            "https://i.imgur.com/vPpeTUL.jpeg",
-            "https://i.imgur.com/YCWwQIJ.jpeg",
-            "https://i.imgur.com/iaYmgn0.jpeg",
-            "https://i.imgur.com/5zTPYdi.jpeg",
-            "https://i.imgur.com/Wlz5Yt5.jpeg",
-            "https://i.imgur.com/Q51pmoW.jpeg",
-            "https://i.imgur.com/LkoiQqV.jpeg",
-            "https://i.imgur.com/4GfjEpp.jpeg",
-            "https://i.imgur.com/6P2DShC.jpeg"
-        ],
-        "2": [
-            "https://i.imgur.com/OhcccCm.jpeg",
-            "https://i.imgur.com/m2hxsXt.jpeg",
-            "https://i.imgur.com/SyU97bd.jpeg",
-            "https://i.imgur.com/mEc5sDJ.jpeg",
-            "https://i.imgur.com/v6C7p62.jpeg",
-            "https://i.imgur.com/kl4oFgz.jpeg",
-            "https://i.imgur.com/0xUABI0.jpeg",
-            "https://i.imgur.com/4jESiCg.jpeg",
-            "https://i.imgur.com/YstsoGo.jpeg",
-            "https://i.imgur.com/XmDZBi6.jpeg",
-            "https://i.imgur.com/C9FtlXQ.jpeg"
-        ]
-    };
+    <script>
+        const chapters = {
+            "1": [
+                "https://i.imgur.com/MfRP2zF.jpeg",
+                "https://i.imgur.com/jXJed1O.jpeg",
+                "https://i.imgur.com/Rr2cvhD.jpeg",
+                "https://i.imgur.com/EtI9RUf.jpeg",
+                "https://i.imgur.com/a1irBKf.jpeg",
+                "https://i.imgur.com/iRn9rVc.jpeg",
+                "https://i.imgur.com/9YKPzIe.jpeg",
+                "https://i.imgur.com/uAk0X9R.jpeg",
+                "https://i.imgur.com/vPpeTUL.jpeg",
+                "https://i.imgur.com/YCWwQIJ.jpeg",
+                "https://i.imgur.com/iaYmgn0.jpeg",
+                "https://i.imgur.com/5zTPYdi.jpeg",
+                "https://i.imgur.com/Wlz5Yt5.jpeg",
+                "https://i.imgur.com/Q51pmoW.jpeg",
+                "https://i.imgur.com/LkoiQqV.jpeg",
+                "https://i.imgur.com/4GfjEpp.jpeg",
+                "https://i.imgur.com/6P2DShC.jpeg"
+            ],
+            "2": [
+                "https://i.imgur.com/OhcccCm.jpeg",
+                "https://i.imgur.com/m2hxsXt.jpeg",
+                "https://i.imgur.com/SyU97bd.jpeg",
+                "https://i.imgur.com/mEc5sDJ.jpeg",
+                "https://i.imgur.com/v6C7p62.jpeg",
+                "https://i.imgur.com/kl4oFgz.jpeg",
+                "https://i.imgur.com/0xUABI0.jpeg",
+                "https://i.imgur.com/4jESiCg.jpeg",
+                "https://i.imgur.com/YstsoGo.jpeg",
+                "https://i.imgur.com/XmDZBi6.jpeg",
+                "https://i.imgur.com/C9FtlXQ.jpeg"
+            ]
+        };
 
-    function loadChapter(chapterNumber) {
-        const container = document.getElementById('images');
-        container.innerHTML = '';
-        chapters[chapterNumber].forEach(url => {
-            const img = document.createElement('img');
-            img.src = url;
-            img.alt = "Page";
-            img.addEventListener('click', () => {
-                if (img.style.transform === 'scale(2)') {
-                    img.style.transform = 'scale(1)';
-                    img.style.cursor = 'zoom-in';
-                } else {
-                    img.style.transform = 'scale(2)';
-                    img.style.cursor = 'zoom-out';
-                }
+        const chapterTitle = document.getElementById("chapterTitle");
+        const imageContainer = document.getElementById("imageContainer");
+        let currentZoom = 1;
+
+        // تحميل الفصل 1 كبداية
+        loadChapter("1");
+
+        function loadChapter(chapterNum) {
+            imageContainer.innerHTML = "";
+            chapterTitle.innerText = `الفصل ${chapterNum} - ${chapterNum === "1" ? "البداية" : "الحاضر"}`;
+            chapters[chapterNum].forEach(url => {
+                const img = document.createElement("img");
+                img.src = url;
+                img.alt = `صفحة`;
+                img.style.transform = `scale(${currentZoom})`;
+                imageContainer.appendChild(img);
             });
-            container.appendChild(img);
-        });
-    }
+        }
 
-    document.getElementById('chapterSelector').addEventListener('change', (e) => {
-        loadChapter(e.target.value);
-    });
-
-    function toggleFullScreen() {
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen();
-        } else {
-            if (document.exitFullscreen) {
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
                 document.exitFullscreen();
             }
         }
-    }
 
-    // Load first chapter on page load
-    loadChapter("1");
-</script>
+        function zoomIn() {
+            currentZoom += 0.1;
+            updateZoom();
+        }
+
+        function zoomOut() {
+            currentZoom = Math.max(0.5, currentZoom - 0.1);
+            updateZoom();
+        }
+
+        function resetZoom() {
+            currentZoom = 1;
+            updateZoom();
+        }
+
+        function updateZoom() {
+            const images = document.querySelectorAll("img");
+            images.forEach(img => {
+                img.style.transform = `scale(${currentZoom})`;
+            });
+        }
+    </script>
 
 </body>
 </html>
