@@ -1,88 +1,83 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>مَهْرَقَانُ الرُّوح</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Amiri&display=swap');
-    @font-face {
-      font-family: 'Al-Mushaf'; /* خط المسند */
-      src: url('https://cdn.jsdelivr.net/gh/almushaf/musnad-font@main/Musnad-Regular.woff2') format('woff2');
-    }
-
     body {
       margin: 0;
-      padding: 0;
-      font-family: 'Amiri', serif;
-      background: linear-gradient(to bottom, #020509, #050A13); /* خلفية بحرية زرقاء غامقة جدًا */
+      background: linear-gradient(to bottom, #0a0e1a, #000510); /* أزرق غامق جداً */
       color: white;
-      text-align: center;
-      scroll-behavior: smooth;
+      font-family: 'Arial', sans-serif;
     }
 
     header {
-      padding: 30px 20px 10px;
+      text-align: center;
+      padding: 20px 0 10px;
+      font-size: 24px;
     }
 
-    .title-main {
-      font-family: 'Al-Mushaf', serif;
-      font-size: 38px;
+    .title {
+      font-family: 'Al-Mushaf', serif; /* إذا كنت مركب خط المسند */
+      font-size: 36px;
       margin-bottom: 5px;
     }
 
-    .title-regular {
+    .subtitle {
       font-size: 18px;
-      margin-bottom: 25px;
+      opacity: 0.8;
     }
 
-    .chapter-title {
-      font-size: 24px;
-      margin-bottom: 15px;
+    #controls {
+      position: relative;
+      text-align: center;
+      margin-bottom: 20px;
     }
 
-    .controls {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 30px;
-    }
-
-    .controls select,
-    .controls button {
-      padding: 10px 14px;
+    #chapterSelect, #viewModeToggle {
+      margin: 5px;
+      padding: 8px 16px;
+      font-size: 14px;
       border: none;
-      border-radius: 4px;
-      background-color: #1f1f1f;
-      color: white;
+      border-radius: 5px;
       cursor: pointer;
     }
 
-    .image-container {
+    #reader {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 60px; /* مسافة مريحة بين الصور */
-      padding-bottom: 120px;
+      gap: 40px; /* تباعد مريح بين الصور */
+      padding: 20px;
+      scroll-behavior: smooth;
     }
 
-    .image-container img {
+    img {
       max-width: 100%;
       height: auto;
       object-fit: contain;
+      border-radius: 8px;
     }
 
-    .top-button {
+    #backToTop {
       position: fixed;
-      left: 20px;
       bottom: 20px;
-      background-color: #1f1f1f;
+      left: 20px;
+      background: rgba(255,255,255,0.1);
       color: white;
-      padding: 10px 12px;
-      border-radius: 5px;
-      font-size: 18px;
+      border: none;
+      padding: 10px;
+      border-radius: 50%;
+      font-size: 20px;
       cursor: pointer;
-      z-index: 999;
+    }
+
+    #navHint {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      color: rgba(255,255,255,0.3);
+      font-size: 13px;
     }
 
   </style>
@@ -90,34 +85,54 @@
 <body>
 
   <header>
-    <div class="title-main">𐩣𐩺𐩧𐩬𐩡𐩬 𐩮𐩪𐩱𐩠</div> <!-- اسم المسند كما بالغلاف -->
-    <div class="title-regular">مَهْرَقَانُ الرُّوح</div>
-    <div class="chapter-title">الفصل الأول (البداية)</div>
-
-    <div class="controls">
-      <select id="chapterSelect" onchange="goToChapter()">
-        <option value="1">الفصل الأول (البداية)</option>
-        <option value="2">الفصل الثاني (لقاء)</option>
-        <!-- أضف المزيد حسب الفصول -->
-      </select>
-      <button onclick="toggleViewMode()">🗔 نمط الصفحة</button>
-    </div>
+    <div class="title">𐩣𐩧𐩬𐩧𐩡𐩬 𐩧𐩪𐩢𐩠</div> <!-- بخط المسند -->
+    <div class="subtitle">مَهْرَقَانُ الرُّوح</div>
+    <div>الفصل الأول (البداية)</div>
   </header>
 
-  <div class="image-container" id="reader">
-    <img src="chapter1/1.jpg" alt="page 1">
-    <img src="chapter1/2.jpg" alt="page 2">
-    <img src="chapter1/3.jpg" alt="page 3">
-    <!-- أضف المزيد -->
+  <div id="controls">
+    <select id="chapterSelect" onchange="loadChapter()">
+      <option value="chapter1">الفصل الأول (البداية)</option>
+      <option value="chapter2">الفصل الثاني (التيه)</option>
+    </select>
+    <button id="viewModeToggle" onclick="toggleViewMode()">نمط الصفحة</button>
   </div>
 
-  <div class="top-button" onclick="scrollToTop()">↑</div>
+  <div id="reader"></div>
+
+  <button id="backToTop" onclick="scrollToTop()">↑</button>
+  <div id="navHint">اضغط يمين/يسار للتنقل بين الصفحات</div>
 
   <script>
+    const chapters = {
+      chapter1: [
+        'chapter1/01.jpg',
+        'chapter1/02.jpg',
+        'chapter1/03.jpg'
+      ],
+      chapter2: [
+        'chapter2/01.jpg',
+        'chapter2/02.jpg',
+        'chapter2/03.jpg'
+      ]
+    };
+
+    let currentChapter = 'chapter1';
+    let currentPageIndex = 0;
     let pageMode = false;
 
-    function scrollToTop() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    function loadChapter() {
+      const select = document.getElementById('chapterSelect');
+      currentChapter = select.value;
+      currentPageIndex = 0;
+      const container = document.getElementById('reader');
+      container.innerHTML = '';
+      chapters[currentChapter].forEach(src => {
+        const img = document.createElement('img');
+        img.src = src;
+        container.appendChild(img);
+      });
+      if (pageMode) scrollToPage(currentPageIndex);
     }
 
     function toggleViewMode() {
@@ -130,8 +145,7 @@
         container.style.overflowY = 'hidden';
         container.querySelectorAll('img').forEach(img => {
           img.style.maxWidth = '100vw';
-          img.style.height = '100vh';
-          img.style.objectFit = 'contain';
+          img.style.height = 'auto';
         });
       } else {
         container.style.flexDirection = 'column';
@@ -143,12 +157,27 @@
       }
     }
 
-    function goToChapter() {
-      const select = document.getElementById("chapterSelect");
-      const chapter = select.value;
-      // تغيّر الصور تلقائياً أو تنقلك لصفحة ثانية
-      window.location.href = `chapter${chapter}.html`; // أو بدّل الصور مباشرةً حسب مجلداتك
+    function scrollToTop() {
+      document.getElementById('reader').scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     }
+
+    function scrollToPage(index) {
+      const container = document.getElementById('reader');
+      const images = container.querySelectorAll('img');
+      if (images[index]) {
+        images[index].scrollIntoView({ behavior: 'smooth', inline: 'start' });
+      }
+    }
+
+    document.addEventListener('keydown', e => {
+      if (!pageMode) return;
+      if (e.key === 'ArrowRight') currentPageIndex++;
+      if (e.key === 'ArrowLeft') currentPageIndex--;
+      currentPageIndex = Math.max(0, Math.min(currentPageIndex, chapters[currentChapter].length - 1));
+      scrollToPage(currentPageIndex);
+    });
+
+    window.onload = loadChapter;
   </script>
 
 </body>
