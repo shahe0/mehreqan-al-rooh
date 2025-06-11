@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <title>مَهْرَقَانُ الرُّوح</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      background: linear-gradient(to bottom, #0a1530, #0e1c3f);
+      background: linear-gradient(to bottom, #0a1124, #0d1a33);
       color: white;
       font-family: 'Arial', sans-serif;
       overflow-x: hidden;
@@ -78,6 +78,10 @@
     }
 
     #image-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
       padding: 0;
       margin: 0 auto;
       width: 100%;
@@ -85,15 +89,18 @@
 
     #image-container img {
       display: block;
+      width: 100%;
       height: auto;
       margin: 0;
       padding: 0;
       border-radius: 0;
-      width: 100%;
+      border: 1px solid rgba(255,255,255,0.04);
     }
 
-    #image-container img.equalize {
-      max-height: none;
+    @media (min-width: 768px) {
+      #image-container img {
+        max-width: 900px;
+      }
     }
 
     #backToTop {
@@ -229,9 +236,6 @@
           const img = document.createElement("img");
           img.src = src;
           img.style.width = `${zoomLevel * 100}%`;
-          if (currentChapter === "ch1" && (i === 0 || i === 15 || i === 16)) {
-            img.classList.add("equalize");
-          }
           container.appendChild(img);
         });
       }
