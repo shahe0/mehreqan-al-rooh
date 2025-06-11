@@ -2,14 +2,12 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>مهرقان الروح</title>
+  <title>مَهْرَقَانُ الرُّوح</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
-
     body {
       background: linear-gradient(to bottom, #050d18, #0a1b30);
       color: white;
-      font-family: 'Cairo', sans-serif;
+      font-family: 'Arial', sans-serif;
       margin: 0;
       padding: 0;
       overflow-x: hidden;
@@ -23,7 +21,7 @@
 
     h2.musnad {
       text-align: center;
-      font-size: 1.7rem;
+      font-size: 1.8rem;
       font-family: monospace;
       margin-bottom: 10px;
     }
@@ -55,6 +53,7 @@
       max-width: 90%;
       height: auto;
       margin: 40px auto;
+      border-radius: 8px;
     }
 
     #backToTop {
@@ -82,7 +81,6 @@
       <option value="ch1">الفصل الأول (البداية)</option>
       <option value="ch2" selected>الفصل الثاني (المواجهة)</option>
     </select>
-
     <select id="page-mode">
       <option value="both">عرض صفحة واحدة × عرض الكل</option>
       <option value="single">صفحة واحدة</option>
@@ -104,17 +102,39 @@
       ch1: {
         title: "الفصل الأول (البداية)",
         pages: [
-          "https://example.com/images/ch1/page1.png",
-          "https://example.com/images/ch1/page2.png",
-          "https://example.com/images/ch1/page3.png",
+          "https://i.imgur.com/MfRP2zF.jpeg",
+          "https://i.imgur.com/jXJed1O.jpeg",
+          "https://i.imgur.com/Rr2cvhD.jpeg",
+          "https://i.imgur.com/EtI9RUf.jpeg",
+          "https://i.imgur.com/a1irBKf.jpeg",
+          "https://i.imgur.com/iRn9rVc.jpeg",
+          "https://i.imgur.com/9YKPzIe.jpeg",
+          "https://i.imgur.com/uAk0X9R.jpeg",
+          "https://i.imgur.com/vPpeTUL.jpeg",
+          "https://i.imgur.com/YCWwQIJ.jpeg",
+          "https://i.imgur.com/iaYmgn0.jpeg",
+          "https://i.imgur.com/5zTPYdi.jpeg",
+          "https://i.imgur.com/Wlz5Yt5.jpeg",
+          "https://i.imgur.com/Q51pmoW.jpeg",
+          "https://i.imgur.com/LkoiQqV.jpeg",
+          "https://i.imgur.com/4GfjEpp.jpeg",
+          "https://i.imgur.com/6P2DShC.jpeg"
         ]
       },
       ch2: {
         title: "الفصل الثاني (المواجهة)",
         pages: [
-          "https://example.com/images/ch2/page1.png",
-          "https://example.com/images/ch2/page2.png",
-          "https://example.com/images/ch2/page3.png",
+          "https://i.imgur.com/OhcccCm.jpeg",
+          "https://i.imgur.com/m2hxsXt.jpeg",
+          "https://i.imgur.com/SyU97bd.jpeg",
+          "https://i.imgur.com/mEc5sDJ.jpeg",
+          "https://i.imgur.com/v6C7p62.jpeg",
+          "https://i.imgur.com/kl4oFgz.jpeg",
+          "https://i.imgur.com/0xUABI0.jpeg",
+          "https://i.imgur.com/4jESiCg.jpeg",
+          "https://i.imgur.com/YstsoGo.jpeg",
+          "https://i.imgur.com/XmDZBi6.jpeg",
+          "https://i.imgur.com/C9FtlXQ.jpeg"
         ]
       }
     };
@@ -130,7 +150,6 @@
       if (mode === "single") {
         const img = document.createElement("img");
         img.src = pages[currentIndex];
-        img.classList.add("single-image");
         container.appendChild(img);
       } else {
         pages.forEach(src => {
@@ -149,14 +168,12 @@
       window.scrollTo(0, 0);
     });
 
-    pageModeSelect.addEventListener("change", () => {
-      renderImages();
-    });
+    pageModeSelect.addEventListener("change", renderImages);
 
     container.addEventListener("click", (e) => {
       if (pageModeSelect.value !== "single") return;
       const width = window.innerWidth;
-      const { pages } = chapters[currentChapter];
+      const pages = chapters[currentChapter].pages;
 
       if (e.clientX > width / 2 && currentIndex < pages.length - 1) {
         currentIndex++;
