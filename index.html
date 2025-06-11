@@ -2,60 +2,54 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>مهرقان الروح</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📖 مهرقان الروح</title>
   <style>
     body {
-      background-color: #222;
-      color: #fff;
-      font-family: Arial, sans-serif;
       margin: 0;
-      padding: 0;
-      overflow-x: hidden;
+      background-color: #222;
+      color: white;
+      font-family: sans-serif;
+      text-align: center;
     }
     h1, h2 {
-      text-align: center;
-      margin: 20px 0 10px;
+      margin: 10px 0;
     }
-    .toolbar {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin: 10px auto;
-      flex-wrap: wrap;
-    }
-    select, label {
-      font-size: 14px;
-      padding: 8px;
-      border-radius: 6px;
-      border: none;
-      background-color: #333;
-      color: #fff;
-    }
-    .image-container {
+    #imageContainer {
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-bottom: 100px;
+      padding-bottom: 100px;
     }
-    .image-container.single img {
-      display: none;
-    }
-    .image-container.single img.active {
-      display: block;
-    }
-    .image-container img {
-      max-width: 100%;
+    #imageContainer img {
+      width: 90vw;
       height: auto;
-      margin-bottom: 20px;
-      transition: transform 0.2s ease;
+      max-width: 100%;
+      margin: 10px 0;
+      transition: transform 0.2s;
     }
-    #toTop {
+    #chapterSelect, #modeToggle {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 999;
+      background: #444;
+      color: white;
+      padding: 5px 10px;
+      margin: 5px;
+      border: none;
+      font-size: 16px;
+      border-radius: 5px;
+    }
+    #modeToggle {
+      left: 170px;
+    }
+    #backToTop {
       position: fixed;
       bottom: 20px;
-      left: 20px;
-      background: #444;
-      color: #fff;
+      right: 20px;
+      background: #666;
+      color: white;
       border: none;
       border-radius: 50%;
       width: 40px;
@@ -69,15 +63,13 @@
 <body>
   <h1>📖 مهرقان الروح 📖</h1>
   <h2 id="chapterTitle">الفصل الأول (البداية)</h2>
-  <div class="toolbar">
-    <select id="chapterSelect" onchange="changeChapter(this.value)">
-      <option value="1">الفصل 1 (البداية)</option>
-      <option value="2">الفصل 2 (الحاضر)</option>
-    </select>
-    <label><input type="checkbox" id="singleMode" onchange="toggleSingle()"> صفحة واحدة</label>
-  </div>
-  <div class="image-container" id="imageContainer"></div>
-  <button id="toTop" onclick="scrollToTop()">↑</button>
+  <select id="chapterSelect" onchange="changeChapter(this.value)">
+    <option value="1">الفصل الأول (البداية)</option>
+    <option value="2">الفصل الثاني (الحاضر)</option>
+  </select>
+  <button id="modeToggle" onclick="togglePageMode()">نمط: تمرير</button>
+  <div id="imageContainer"></div>
+  <button id="backToTop" onclick="scrollToTop()">↑</button>
 
   <script>
     const chapters = {
@@ -101,6 +93,7 @@
         "https://i.imgur.com/6P2DShC.jpeg"
       ],
       "2": [
+        "https://i.imgur.com/OhcccCm.jpeg",
         "https://i.imgur.com/m2hxsXt.jpeg",
         "https://i.imgur.com/SyU97bd.jpeg",
         "https://i.imgur.com/mEc5sDJ.jpeg",
@@ -114,77 +107,71 @@
       ]
     };
 
-    let currentChapter = "1";
-    let singlePageMode = false;
-    let currentIndex = 0;
-    let zoomLevel = 1;
+    const chapterNames = {
+      "1": "الفصل الأول (البداية)",
+      "2": "الفصل الثاني (الحاضر)"
+    };
 
-    const imageContainer = document.getElementById("imageContainer");
-    const chapterTitle = document.getElementById("chapterTitle");
+    const container = document.getElementById("imageContainer");
+    const title = document.getElementById("chapterTitle");
+    const select = document.getElementById("chapterSelect");
+    let pageMode = "scroll"; // or "single"
+    let currentPage = 0;
 
     function loadChapter(ch) {
-      currentChapter = ch;
-      currentIndex = 0;
-      chapterTitle.innerText = document.querySelector(`#chapterSelect option[value="${ch}"]`).text;
-      imageContainer.innerHTML = "";
-      chapters[ch].forEach((url, i) => {
+      title.textContent = chapterNames[ch];
+      container.innerHTML = "";
+      currentPage = 0;
+      chapters[ch].forEach(src => {
         const img = document.createElement("img");
-        img.src = url;
-        img.alt = `صفحة ${i + 1}`;
-        if (singlePageMode) img.classList.add("inactive");
-        if (i === 0 && singlePageMode) img.classList.add("active");
-        imageContainer.appendChild(img);
+        img.src = src;
+        container.appendChild(img);
       });
+    }
+
+    function changeChapter(ch) {
+      loadChapter(ch);
       scrollToTop();
-      updateSingleMode();
     }
 
     function scrollToTop() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    function toggleSingle() {
-      singlePageMode = document.getElementById("singleMode").checked;
-      updateSingleMode();
+    function togglePageMode() {
+      pageMode = (pageMode === "scroll") ? "single" : "scroll";
+      document.getElementById("modeToggle").textContent = pageMode === "single" ? "نمط: صفحة" : "نمط: تمرير";
+      applyPageMode();
     }
 
-    function updateSingleMode() {
-      imageContainer.classList.toggle("single", singlePageMode);
-      const imgs = imageContainer.querySelectorAll("img");
-      imgs.forEach((img, i) => {
-        img.classList.remove("active");
-        if (!singlePageMode) img.classList.remove("inactive");
+    function applyPageMode() {
+      const imgs = document.querySelectorAll("#imageContainer img");
+      imgs.forEach((img, idx) => {
+        img.style.display = (pageMode === "single") ? (idx === currentPage ? "block" : "none") : "block";
       });
-      if (singlePageMode && imgs.length > 0) {
-        imgs[currentIndex].classList.add("active");
+    }
+
+    document.addEventListener("click", (e) => {
+      if (pageMode !== "single") return;
+      const width = window.innerWidth;
+      if (e.clientX > width * 0.7 && currentPage < chapters[select.value].length - 1) {
+        currentPage++;
+      } else if (e.clientX < width * 0.3 && currentPage > 0) {
+        currentPage--;
       }
-    }
-
-    function navigateSinglePage(direction) {
-      if (!singlePageMode) return;
-      const imgs = imageContainer.querySelectorAll("img");
-      imgs[currentIndex].classList.remove("active");
-      currentIndex = Math.min(Math.max(0, currentIndex + direction), imgs.length - 1);
-      imgs[currentIndex].classList.add("active");
-    }
-
-    function changeChapter(val) {
-      loadChapter(val);
-    }
-
-    document.addEventListener("keydown", e => {
-      if (singlePageMode && (e.key === "ArrowRight" || e.key === "ArrowLeft")) {
-        navigateSinglePage(e.key === "ArrowRight" ? 1 : -1);
-      }
+      applyPageMode();
     });
 
-    document.addEventListener("wheel", e => {
+    document.addEventListener("wheel", (e) => {
       if (e.altKey) {
         e.preventDefault();
-        zoomLevel += e.deltaY * -0.001;
-        zoomLevel = Math.max(0.5, Math.min(2, zoomLevel));
-        imageContainer.querySelectorAll("img").forEach(img => {
-          img.style.transform = `scale(${zoomLevel})`;
+        const delta = e.deltaY > 0 ? -0.05 : 0.05;
+        const imgs = document.querySelectorAll("#imageContainer img");
+        imgs.forEach(img => {
+          const scale = parseFloat(img.dataset.scale || "1") + delta;
+          const final = Math.max(0.5, Math.min(scale, 2));
+          img.dataset.scale = final;
+          img.style.transform = `scale(${final})`;
         });
       }
     }, { passive: false });
