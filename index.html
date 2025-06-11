@@ -2,183 +2,129 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>مَهْرَقَانُ الرُّوح</title>
   <style>
     body {
       margin: 0;
-      background: linear-gradient(to bottom, #0a0e1a, #000510); /* أزرق غامق جداً */
-      color: white;
+      background: #010818; /* أزرق غامق جدًا */
       font-family: 'Arial', sans-serif;
-    }
-
-    header {
-      text-align: center;
-      padding: 20px 0 10px;
-      font-size: 24px;
+      color: white;
     }
 
     .title {
-      font-family: 'Al-Mushaf', serif; /* إذا كنت مركب خط المسند */
-      font-size: 36px;
-      margin-bottom: 5px;
-    }
-
-    .subtitle {
-      font-size: 18px;
-      opacity: 0.8;
-    }
-
-    #controls {
-      position: relative;
+      font-family: 'Arial', sans-serif;
+      font-size: 30px;
+      font-weight: bold;
       text-align: center;
-      margin-bottom: 20px;
+      margin-top: 15px;
     }
 
-    #chapterSelect, #viewModeToggle {
-      margin: 5px;
-      padding: 8px 16px;
-      font-size: 14px;
+    .masnad-title {
+      font-family: 'Masnad', serif; /* أضف الخط فعليًا لاحقًا */
+      font-size: 26px;
+      text-align: center;
+      margin-bottom: 15px;
+      letter-spacing: 1px;
+    }
+
+    .chapter-title {
+      font-size: 22px;
+      text-align: center;
+      margin-top: 10px;
+      margin-bottom: 15px;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+
+    .controls select {
+      padding: 6px 12px;
+      font-size: 16px;
+      border-radius: 4px;
       border: none;
-      border-radius: 5px;
-      cursor: pointer;
+      background-color: #ffffff11;
+      color: white;
     }
 
-    #reader {
+    .image-container {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 40px; /* تباعد مريح بين الصور */
-      padding: 20px;
-      scroll-behavior: smooth;
+      gap: 50px; /* مسافة بين الصفحات */
+      padding-bottom: 100px;
     }
 
-    img {
-      max-width: 100%;
+    .image-container img {
+      width: 90%;
+      max-width: 800px;
       height: auto;
       object-fit: contain;
-      border-radius: 8px;
+      border-radius: 6px;
     }
 
-    #backToTop {
+    .scroll-top {
       position: fixed;
       bottom: 20px;
       left: 20px;
-      background: rgba(255,255,255,0.1);
+      background-color: rgba(255, 255, 255, 0.2);
       color: white;
       border: none;
-      padding: 10px;
-      border-radius: 50%;
-      font-size: 20px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 24px;
       cursor: pointer;
     }
 
-    #navHint {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      color: rgba(255,255,255,0.3);
-      font-size: 13px;
-    }
+    /* يمكنك لاحقًا إضافة نمط خاص لعرض صفحة واحدة */
 
   </style>
+
+  <!-- خط المسند المخصص (حمّله من جهازك وأضفه هنا) -->
+  <!--
+  <style>
+    @font-face {
+      font-family: 'Masnad';
+      src: url('fonts/masnad.woff') format('woff');
+    }
+  </style>
+  -->
 </head>
+
 <body>
 
-  <header>
-    <div class="title">𐩣𐩧𐩬𐩧𐩡𐩬 𐩧𐩪𐩢𐩠</div> <!-- بخط المسند -->
-    <div class="subtitle">مَهْرَقَانُ الرُّوح</div>
-    <div>الفصل الأول (البداية)</div>
-  </header>
+  <!-- العنوان -->
+  <div class="title">مَهْرَقَانُ الرُّوح</div>
+  <div class="masnad-title">𐩣𐩺𐩧𐩧𐩬𐩡𐩬 𐩪𐩧𐩱𐩣</div>
 
-  <div id="controls">
-    <select id="chapterSelect" onchange="loadChapter()">
-      <option value="chapter1">الفصل الأول (البداية)</option>
-      <option value="chapter2">الفصل الثاني (التيه)</option>
+  <!-- عنوان الفصل -->
+  <div class="chapter-title">الفصل الثاني (المواجهة)</div>
+
+  <!-- عناصر التحكم -->
+  <div class="controls">
+    <select>
+      <option>الفصل الأول (البداية)</option>
+      <option selected>الفصل الثاني (المواجهة)</option>
     </select>
-    <button id="viewModeToggle" onclick="toggleViewMode()">نمط الصفحة</button>
+    <select>
+      <option>عرض صفحة واحدة × عرض الكل</option>
+    </select>
   </div>
 
-  <div id="reader"></div>
+  <!-- الصفحات -->
+  <div class="image-container">
+    <img src="images/2-1.png" alt="Page 1" />
+    <img src="images/2-2.png" alt="Page 2" />
+    <img src="images/2-3.png" alt="Page 3" />
+    <!-- أضف المزيد من الصور حسب الحاجة -->
+  </div>
 
-  <button id="backToTop" onclick="scrollToTop()">↑</button>
-  <div id="navHint">اضغط يمين/يسار للتنقل بين الصفحات</div>
-
-  <script>
-    const chapters = {
-      chapter1: [
-        'chapter1/01.jpg',
-        'chapter1/02.jpg',
-        'chapter1/03.jpg'
-      ],
-      chapter2: [
-        'chapter2/01.jpg',
-        'chapter2/02.jpg',
-        'chapter2/03.jpg'
-      ]
-    };
-
-    let currentChapter = 'chapter1';
-    let currentPageIndex = 0;
-    let pageMode = false;
-
-    function loadChapter() {
-      const select = document.getElementById('chapterSelect');
-      currentChapter = select.value;
-      currentPageIndex = 0;
-      const container = document.getElementById('reader');
-      container.innerHTML = '';
-      chapters[currentChapter].forEach(src => {
-        const img = document.createElement('img');
-        img.src = src;
-        container.appendChild(img);
-      });
-      if (pageMode) scrollToPage(currentPageIndex);
-    }
-
-    function toggleViewMode() {
-      const container = document.getElementById('reader');
-      pageMode = !pageMode;
-      if (pageMode) {
-        container.style.flexDirection = 'row';
-        container.style.flexWrap = 'nowrap';
-        container.style.overflowX = 'scroll';
-        container.style.overflowY = 'hidden';
-        container.querySelectorAll('img').forEach(img => {
-          img.style.maxWidth = '100vw';
-          img.style.height = 'auto';
-        });
-      } else {
-        container.style.flexDirection = 'column';
-        container.style.overflow = 'visible';
-        container.querySelectorAll('img').forEach(img => {
-          img.style.maxWidth = '100%';
-          img.style.height = 'auto';
-        });
-      }
-    }
-
-    function scrollToTop() {
-      document.getElementById('reader').scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-    }
-
-    function scrollToPage(index) {
-      const container = document.getElementById('reader');
-      const images = container.querySelectorAll('img');
-      if (images[index]) {
-        images[index].scrollIntoView({ behavior: 'smooth', inline: 'start' });
-      }
-    }
-
-    document.addEventListener('keydown', e => {
-      if (!pageMode) return;
-      if (e.key === 'ArrowRight') currentPageIndex++;
-      if (e.key === 'ArrowLeft') currentPageIndex--;
-      currentPageIndex = Math.max(0, Math.min(currentPageIndex, chapters[currentChapter].length - 1));
-      scrollToPage(currentPageIndex);
-    });
-
-    window.onload = loadChapter;
-  </script>
+  <!-- زر الرجوع لأعلى -->
+  <button class="scroll-top" onclick="window.scrollTo({ top: 0, behavior: 'smooth' });">↑</button>
 
 </body>
 </html>
