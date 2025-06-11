@@ -21,8 +21,9 @@
 
     h2.musnad {
       text-align: center;
-      font-size: 1.8rem;
+      font-size: 1.4rem;
       font-family: monospace;
+      margin-top: -10px;
       margin-bottom: 10px;
     }
 
@@ -57,7 +58,6 @@
       border-radius: 8px;
     }
 
-    /* توازن الحجم للصفحات المحددة */
     #image-container img.equalize {
       max-height: 820px;
     }
@@ -80,16 +80,16 @@
 
   <h1 class="title">مَهْرَقَانُ الرُّوح</h1>
   <h2 class="musnad">𐩣𐩺𐩧𐩬𐩡𐩬 𐩬𐩪𐩱𐩠𐩬</h2>
-  <h3 class="chapter" id="chapter-title">الفصل الثاني (الحاضر)</h3>
+  <h3 class="chapter" id="chapter-title">الفصل الأول (البداية)</h3>
 
   <div class="controls">
     <select id="chapter-select">
-      <option value="ch1">الفصل الأول (البداية)</option>
-      <option value="ch2" selected>الفصل الثاني (الحاضر)</option>
+      <option value="ch1" selected>الفصل الأول (البداية)</option>
+      <option value="ch2">الفصل الثاني (الحاضر)</option>
     </select>
     <select id="page-mode">
       <option value="single">صفحة واحدة</option>
-      <option value="all">عرض الكل</option>
+      <option value="all" selected>عرض الكل</option>
     </select>
   </div>
 
@@ -107,7 +107,7 @@
       ch1: {
         title: "الفصل الأول (البداية)",
         pages: [
-          "https://i.imgur.com/MfRP2zF.jpeg", // 1
+          "https://i.imgur.com/MfRP2zF.jpeg",
           "https://i.imgur.com/jXJed1O.jpeg",
           "https://i.imgur.com/Rr2cvhD.jpeg",
           "https://i.imgur.com/EtI9RUf.jpeg",
@@ -120,10 +120,10 @@
           "https://i.imgur.com/iaYmgn0.jpeg",
           "https://i.imgur.com/5zTPYdi.jpeg",
           "https://i.imgur.com/Wlz5Yt5.jpeg",
-          "https://i.imgur.com/Q51pmoW.jpeg", // رقم 14
-          "https://i.imgur.com/LkoiQqV.jpeg", // رقم 15
-          "https://i.imgur.com/4GfjEpp.jpeg", // ← صفحة 16 (راح نطبق class خاص)
-          "https://i.imgur.com/6P2DShC.jpeg"  // ← الأخيرة
+          "https://i.imgur.com/Q51pmoW.jpeg",
+          "https://i.imgur.com/LkoiQqV.jpeg",
+          "https://i.imgur.com/4GfjEpp.jpeg",
+          "https://i.imgur.com/6P2DShC.jpeg"
         ]
       },
       ch2: {
@@ -144,12 +144,12 @@
       }
     };
 
-    let currentChapter = "ch2";
+    let currentChapter = "ch1";
     let currentIndex = 0;
 
     function renderImages() {
       container.innerHTML = "";
-      const mode = pageModeSelect.value;
+      const mode = pageModeSelect.value || "all";
       const { pages } = chapters[currentChapter];
 
       if (mode === "single") {
@@ -160,7 +160,6 @@
         pages.forEach((src, i) => {
           const img = document.createElement("img");
           img.src = src;
-          // توازن صفحات: 1، 16، الأخيرة في الفصل 1
           if (currentChapter === "ch1" && (i === 0 || i === 15 || i === 16)) {
             img.classList.add("equalize");
           }
