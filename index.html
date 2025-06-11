@@ -14,7 +14,7 @@
       text-align: center;
     }
     .controls {
-      position: fixed;
+      position: absolute;
       top: 10px;
       left: 50%;
       transform: translateX(-50%);
@@ -44,15 +44,6 @@
       height: auto;
       transition: transform 0.2s;
     }
-    .arrow-indicator {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      color: white;
-      font-size: 24px;
-      opacity: 0.3;
-      pointer-events: none;
-    }
     .scroll-to-top {
       position: fixed;
       bottom: 20px;
@@ -60,7 +51,8 @@
       background: #444;
       color: white;
       border: none;
-      padding: 10px;
+      padding: 10px 16px;
+      font-size: 20px;
       border-radius: 8px;
       cursor: pointer;
     }
@@ -79,8 +71,8 @@
     </select>
   </div>
 
-  <div class="arrow-indicator">⟵⟶</div>
-  <button class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">⬆️ للأعلى</button>
+  <button class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
+
   <h1>📖 مهرقان الروح 📖</h1>
   <h2 id="chapterTitle"></h2>
   <div class="image-container" id="imageContainer"></div>
