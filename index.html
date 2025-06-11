@@ -1,202 +1,155 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>مَهْرَقَانُ الرُّوح</title>
-  <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Amiri&display=swap');
+    @font-face {
+      font-family: 'Al-Mushaf'; /* خط المسند */
+      src: url('https://cdn.jsdelivr.net/gh/almushaf/musnad-font@main/Musnad-Regular.woff2') format('woff2');
+    }
+
     body {
       margin: 0;
+      padding: 0;
       font-family: 'Amiri', serif;
-      background: linear-gradient(to bottom, #005f8f, #003d5c); /* يشبه البحر */
+      background: linear-gradient(to bottom, #020509, #050A13); /* خلفية بحرية زرقاء غامقة جدًا */
       color: white;
-      overflow-x: hidden;
+      text-align: center;
+      scroll-behavior: smooth;
     }
+
     header {
-      text-align: center;
-      padding: 30px 10px 10px;
+      padding: 30px 20px 10px;
     }
-    .main-title {
-      font-size: 28px;
-      margin: 0;
+
+    .title-main {
+      font-family: 'Al-Mushaf', serif;
+      font-size: 38px;
+      margin-bottom: 5px;
     }
-    .masnad-title {
-      font-family: 'Courier New', monospace; /* بديل تقريبي للمسند */
-      font-size: 20px;
-      margin-top: 5px;
-      color: #cbdfff;
-      letter-spacing: 2px;
+
+    .title-regular {
+      font-size: 18px;
+      margin-bottom: 25px;
     }
-    #chapterTitle {
-      text-align: center;
-      margin-bottom: 20px;
-      font-size: 20px;
+
+    .chapter-title {
+      font-size: 24px;
+      margin-bottom: 15px;
     }
-    .top-controls {
-      position: fixed;
-      top: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 1000;
+
+    .controls {
       display: flex;
+      justify-content: center;
+      align-items: center;
       gap: 10px;
-      background: rgba(0, 0, 0, 0.4);
-      padding: 5px 10px;
-      border-radius: 10px;
+      margin-bottom: 30px;
     }
-    select {
-      font-size: 14px;
-      padding: 4px 8px;
+
+    .controls select,
+    .controls button {
+      padding: 10px 14px;
+      border: none;
+      border-radius: 4px;
+      background-color: #1f1f1f;
+      color: white;
+      cursor: pointer;
     }
+
     .image-container {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 40px;
-      padding: 20px 0 80px;
+      gap: 60px; /* مسافة مريحة بين الصور */
+      padding-bottom: 120px;
     }
-    img {
+
+    .image-container img {
       max-width: 100%;
       height: auto;
-      transition: transform 0.2s;
+      object-fit: contain;
     }
-    .back-to-top {
+
+    .top-button {
       position: fixed;
-      bottom: 20px;
       left: 20px;
-      width: 40px;
-      height: 40px;
-      background-color: rgba(255, 255, 255, 0.2);
-      border: none;
-      border-radius: 50%;
-      cursor: pointer;
-      z-index: 1000;
-    }
-    .back-to-top::before {
-      content: "↑";
-      font-size: 20px;
+      bottom: 20px;
+      background-color: #1f1f1f;
       color: white;
+      padding: 10px 12px;
+      border-radius: 5px;
+      font-size: 18px;
+      cursor: pointer;
+      z-index: 999;
     }
+
   </style>
 </head>
 <body>
 
   <header>
-    <h1 class="main-title">مَهْرَقَانُ الرُّوح</h1>
-    <div class="masnad-title">𐩣𐩢𐩧𐩬𐩡𐩬 𐩮𐩧𐩠𐩢</div>
+    <div class="title-main">𐩣𐩺𐩧𐩬𐩡𐩬 𐩮𐩪𐩱𐩠</div> <!-- اسم المسند كما بالغلاف -->
+    <div class="title-regular">مَهْرَقَانُ الرُّوح</div>
+    <div class="chapter-title">الفصل الأول (البداية)</div>
+
+    <div class="controls">
+      <select id="chapterSelect" onchange="goToChapter()">
+        <option value="1">الفصل الأول (البداية)</option>
+        <option value="2">الفصل الثاني (لقاء)</option>
+        <!-- أضف المزيد حسب الفصول -->
+      </select>
+      <button onclick="toggleViewMode()">🗔 نمط الصفحة</button>
+    </div>
   </header>
 
-  <div class="top-controls">
-    <select id="chapterSelect" onchange="changeChapter(this.value)">
-      <option value="1">الفصل الأول (البداية)</option>
-      <option value="2">الفصل الثاني (الحاضر)</option>
-    </select>
-    <select id="pageModeSelect" onchange="togglePageMode(this.value)">
-      <option value="scroll">نمط التمرير</option>
-      <option value="single">نمط الصفحة</option>
-    </select>
+  <div class="image-container" id="reader">
+    <img src="chapter1/1.jpg" alt="page 1">
+    <img src="chapter1/2.jpg" alt="page 2">
+    <img src="chapter1/3.jpg" alt="page 3">
+    <!-- أضف المزيد -->
   </div>
 
-  <h2 id="chapterTitle">الفصل الأول (البداية)</h2>
-  <div class="image-container" id="imageContainer"></div>
-
-  <button class="back-to-top" onclick="scrollToTop()"></button>
+  <div class="top-button" onclick="scrollToTop()">↑</div>
 
   <script>
-    const chapters = {
-      "1": [
-        "https://i.imgur.com/MfRP2zF.jpeg",
-        "https://i.imgur.com/jXJed1O.jpeg",
-        "https://i.imgur.com/Rr2cvhD.jpeg",
-        "https://i.imgur.com/EtI9RUf.jpeg",
-        "https://i.imgur.com/a1irBKf.jpeg",
-        "https://i.imgur.com/iRn9rVc.jpeg",
-        "https://i.imgur.com/9YKPzIe.jpeg",
-        "https://i.imgur.com/uAk0X9R.jpeg",
-        "https://i.imgur.com/vPpeTUL.jpeg",
-        "https://i.imgur.com/YCWwQIJ.jpeg",
-        "https://i.imgur.com/iaYmgn0.jpeg",
-        "https://i.imgur.com/5zTPYdi.jpeg",
-        "https://i.imgur.com/Wlz5Yt5.jpeg",
-        "https://i.imgur.com/Q51pmoW.jpeg",
-        "https://i.imgur.com/LkoiQqV.jpeg",
-        "https://i.imgur.com/4GfjEpp.jpeg",
-        "https://i.imgur.com/6P2DShC.jpeg"
-      ],
-      "2": [
-        "https://i.imgur.com/OhcccCm.jpeg",
-        "https://i.imgur.com/m2hxsXt.jpeg",
-        "https://i.imgur.com/SyU97bd.jpeg",
-        "https://i.imgur.com/mEc5sDJ.jpeg",
-        "https://i.imgur.com/v6C7p62.jpeg",
-        "https://i.imgur.com/kl4oFgz.jpeg",
-        "https://i.imgur.com/0xUABI0.jpeg",
-        "https://i.imgur.com/4jESiCg.jpeg",
-        "https://i.imgur.com/YstsoGo.jpeg",
-        "https://i.imgur.com/XmDZBi6.jpeg",
-        "https://i.imgur.com/C9FtlXQ.jpeg"
-      ]
-    };
-
-    const titles = {
-      "1": "الفصل الأول (البداية)",
-      "2": "الفصل الثاني (الحاضر)"
-    };
-
-    let currentChapter = "1";
-    let pageMode = "scroll";
-
-    function loadChapter(chapterNum) {
-      const container = document.getElementById("imageContainer");
-      const title = document.getElementById("chapterTitle");
-      container.innerHTML = "";
-      window.scrollTo(0, 0);
-
-      chapters[chapterNum].forEach((src, i) => {
-        const img = document.createElement("img");
-        img.src = src;
-        img.alt = `صفحة ${i + 1}`;
-        if (pageMode === "single") {
-          img.style.display = i === 0 ? "block" : "none";
-        }
-        container.appendChild(img);
-      });
-
-      title.textContent = titles[chapterNum];
-    }
-
-    function changeChapter(val) {
-      currentChapter = val;
-      loadChapter(val);
-    }
-
-    function togglePageMode(mode) {
-      pageMode = mode;
-      loadChapter(currentChapter);
-    }
+    let pageMode = false;
 
     function scrollToTop() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    document.addEventListener("click", (e) => {
-      if (pageMode !== "single") return;
-      const imgs = document.querySelectorAll("#imageContainer img");
-      let currentIndex = [...imgs].findIndex(img => img.style.display === "block");
-
-      if (e.clientX < window.innerWidth / 2) {
-        currentIndex = Math.max(0, currentIndex - 1);
+    function toggleViewMode() {
+      const container = document.getElementById('reader');
+      pageMode = !pageMode;
+      if (pageMode) {
+        container.style.flexDirection = 'row';
+        container.style.flexWrap = 'nowrap';
+        container.style.overflowX = 'scroll';
+        container.style.overflowY = 'hidden';
+        container.querySelectorAll('img').forEach(img => {
+          img.style.maxWidth = '100vw';
+          img.style.height = '100vh';
+          img.style.objectFit = 'contain';
+        });
       } else {
-        currentIndex = Math.min(imgs.length - 1, currentIndex + 1);
+        container.style.flexDirection = 'column';
+        container.style.overflow = 'visible';
+        container.querySelectorAll('img').forEach(img => {
+          img.style.maxWidth = '100%';
+          img.style.height = 'auto';
+        });
       }
+    }
 
-      imgs.forEach((img, i) => {
-        img.style.display = i === currentIndex ? "block" : "none";
-      });
-    });
-
-    loadChapter("1");
+    function goToChapter() {
+      const select = document.getElementById("chapterSelect");
+      const chapter = select.value;
+      // تغيّر الصور تلقائياً أو تنقلك لصفحة ثانية
+      window.location.href = `chapter${chapter}.html`; // أو بدّل الصور مباشرةً حسب مجلداتك
+    }
   </script>
+
 </body>
 </html>
