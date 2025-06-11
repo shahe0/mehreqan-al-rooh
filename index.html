@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <title>مَهْرَقَانُ الرُّوح</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    body {
+    html, body {
+      margin: 0;
+      padding: 0;
       background: linear-gradient(to bottom, #0a1530, #0e1c3f);
       color: white;
       font-family: 'Arial', sans-serif;
-      margin: 0;
-      padding: 0;
       overflow-x: hidden;
     }
 
@@ -49,17 +50,25 @@
       cursor: pointer;
     }
 
+    #image-container {
+      padding: 0;
+      margin: 0 auto;
+      width: 100%;
+    }
+
     #image-container img {
       display: block;
-      max-width: 90%;
-      max-height: 1000px;
+      width: 100%;
       height: auto;
-      margin: 40px auto;
-      border-radius: 8px;
+      margin: 20px 0;
+      border-radius: 6px;
     }
 
     #image-container img.equalize {
-      max-height: 820px;
+      max-height: none;
+      width: 100%;
+      padding: 0;
+      border-radius: 0;
     }
 
     #backToTop {
@@ -107,7 +116,7 @@
       ch1: {
         title: "الفصل الأول (البداية)",
         pages: [
-          "https://i.imgur.com/MfRP2zF.jpeg",
+          "https://i.imgur.com/MfRP2zF.jpeg", // ← أول صورة
           "https://i.imgur.com/jXJed1O.jpeg",
           "https://i.imgur.com/Rr2cvhD.jpeg",
           "https://i.imgur.com/EtI9RUf.jpeg",
@@ -122,8 +131,8 @@
           "https://i.imgur.com/Wlz5Yt5.jpeg",
           "https://i.imgur.com/Q51pmoW.jpeg",
           "https://i.imgur.com/LkoiQqV.jpeg",
-          "https://i.imgur.com/4GfjEpp.jpeg",
-          "https://i.imgur.com/6P2DShC.jpeg"
+          "https://i.imgur.com/4GfjEpp.jpeg", // ← صفحة رقم 16
+          "https://i.imgur.com/6P2DShC.jpeg"  // ← الأخيرة
         ]
       },
       ch2: {
