@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>مهرقان الروح</title>
   <style>
     body {
@@ -12,6 +12,7 @@
       margin: 0;
       padding: 0;
       text-align: center;
+      overscroll-behavior: none;
     }
     h1, h2 {
       margin: 20px 0;
@@ -26,13 +27,26 @@
       flex-direction: column;
       align-items: center;
       gap: 10px;
-      padding-bottom: 50px;
+      padding-bottom: 80px;
     }
     .image-container img {
       width: 100%;
       max-width: 600px;
       height: auto;
       border-radius: 4px;
+    }
+    #scrollTopBtn {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background-color: #444;
+      color: white;
+      border: none;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      z-index: 1000;
     }
   </style>
 </head>
@@ -46,6 +60,8 @@
   </select>
 
   <div class="image-container" id="imageContainer"></div>
+
+  <button id="scrollTopBtn" onclick="scrollToTop()">↑ للأعلى</button>
 
   <script>
     const chapters = {
@@ -69,6 +85,7 @@
         "https://i.imgur.com/6P2DShC.jpeg"
       ],
       "2": [
+        "https://i.imgur.com/OhcccCm.jpeg",
         "https://i.imgur.com/m2hxsXt.jpeg",
         "https://i.imgur.com/SyU97bd.jpeg",
         "https://i.imgur.com/mEc5sDJ.jpeg",
@@ -92,12 +109,29 @@
         img.src = src;
         container.appendChild(img);
       });
-      window.scrollTo(0, 0); // يرجع لأعلى الصفحة
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
     function changeChapter(val) {
       loadChapter(val);
     }
+
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    // منع تكبير المتصفح باستخدام Ctrl + Scroll أو Ctrl + +/- أو Pinch
+    window.addEventListener("wheel", e => {
+      if (e.ctrlKey) e.preventDefault();
+    }, { passive: false });
+
+    window.addEventListener("keydown", e => {
+      if ((e.ctrlKey || e.metaKey) && ["+", "-", "=", "0"].includes(e.key)) {
+        e.preventDefault();
+      }
+    });
+
+    document.addEventListener("gesturestart", e => e.preventDefault()); // للهواتف
 
     window.onload = () => {
       loadChapter("1");
