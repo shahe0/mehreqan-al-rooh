@@ -2,182 +2,201 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>مهرقان الروح</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>مَهْرَقَانُ الرُّوح</title>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
   <style>
     body {
-      background-color: #222;
-      color: #fff;
-      font-family: Arial, sans-serif;
       margin: 0;
-      padding: 0;
-      text-align: center;
+      font-family: 'Amiri', serif;
+      background: linear-gradient(to bottom, #005f8f, #003d5c); /* يشبه البحر */
+      color: white;
+      overflow-x: hidden;
     }
-    .controls {
-      position: absolute;
+    header {
+      text-align: center;
+      padding: 30px 10px 10px;
+    }
+    .main-title {
+      font-size: 28px;
+      margin: 0;
+    }
+    .masnad-title {
+      font-family: 'Courier New', monospace; /* بديل تقريبي للمسند */
+      font-size: 20px;
+      margin-top: 5px;
+      color: #cbdfff;
+      letter-spacing: 2px;
+    }
+    #chapterTitle {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 20px;
+    }
+    .top-controls {
+      position: fixed;
       top: 10px;
       left: 50%;
       transform: translateX(-50%);
-      z-index: 999;
-      background: rgba(34,34,34,0.95);
-      padding: 10px;
-      border-radius: 8px;
+      z-index: 1000;
       display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
       gap: 10px;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 5px 10px;
+      border-radius: 10px;
     }
     select {
-      padding: 8px;
       font-size: 14px;
+      padding: 4px 8px;
     }
     .image-container {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 20px;
-      margin-top: 100px;
-      padding-bottom: 100px;
+      gap: 40px;
+      padding: 20px 0 80px;
     }
     img {
       max-width: 100%;
       height: auto;
       transition: transform 0.2s;
     }
-    .scroll-to-top {
+    .back-to-top {
       position: fixed;
       bottom: 20px;
       left: 20px;
-      background: #444;
-      color: white;
+      width: 40px;
+      height: 40px;
+      background-color: rgba(255, 255, 255, 0.2);
       border: none;
-      padding: 10px 16px;
-      font-size: 20px;
-      border-radius: 8px;
+      border-radius: 50%;
       cursor: pointer;
+      z-index: 1000;
+    }
+    .back-to-top::before {
+      content: "↑";
+      font-size: 20px;
+      color: white;
     }
   </style>
 </head>
 <body>
 
-  <div class="controls">
+  <header>
+    <h1 class="main-title">مَهْرَقَانُ الرُّوح</h1>
+    <div class="masnad-title">𐩣𐩢𐩧𐩬𐩡𐩬 𐩮𐩧𐩠𐩢</div>
+  </header>
+
+  <div class="top-controls">
     <select id="chapterSelect" onchange="changeChapter(this.value)">
       <option value="1">الفصل الأول (البداية)</option>
       <option value="2">الفصل الثاني (الحاضر)</option>
     </select>
     <select id="pageModeSelect" onchange="togglePageMode(this.value)">
-      <option value="scroll">وضع التمرير</option>
-      <option value="single">صفحة واحدة</option>
+      <option value="scroll">نمط التمرير</option>
+      <option value="single">نمط الصفحة</option>
     </select>
   </div>
 
-  <button class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑</button>
-
-  <h1>📖 مهرقان الروح 📖</h1>
-  <h2 id="chapterTitle"></h2>
+  <h2 id="chapterTitle">الفصل الأول (البداية)</h2>
   <div class="image-container" id="imageContainer"></div>
+
+  <button class="back-to-top" onclick="scrollToTop()"></button>
 
   <script>
     const chapters = {
-      "1": {
-        pages: [
-          "https://i.imgur.com/MfRP2zF.jpeg",
-          "https://i.imgur.com/jXJed1O.jpeg",
-          "https://i.imgur.com/Rr2cvhD.jpeg",
-          "https://i.imgur.com/EtI9RUf.jpeg",
-          "https://i.imgur.com/a1irBKf.jpeg",
-          "https://i.imgur.com/iRn9rVc.jpeg",
-          "https://i.imgur.com/9YKPzIe.jpeg",
-          "https://i.imgur.com/uAk0X9R.jpeg",
-          "https://i.imgur.com/vPpeTUL.jpeg",
-          "https://i.imgur.com/YCWwQIJ.jpeg",
-          "https://i.imgur.com/iaYmgn0.jpeg",
-          "https://i.imgur.com/5zTPYdi.jpeg",
-          "https://i.imgur.com/Wlz5Yt5.jpeg",
-          "https://i.imgur.com/Q51pmoW.jpeg",
-          "https://i.imgur.com/LkoiQqV.jpeg",
-          "https://i.imgur.com/4GfjEpp.jpeg",
-          "https://i.imgur.com/6P2DShC.jpeg"
-        ]
-      },
-      "2": {
-        pages: [
-          "https://i.imgur.com/OhcccCm.jpeg",
-          "https://i.imgur.com/m2hxsXt.jpeg",
-          "https://i.imgur.com/SyU97bd.jpeg",
-          "https://i.imgur.com/mEc5sDJ.jpeg",
-          "https://i.imgur.com/v6C7p62.jpeg",
-          "https://i.imgur.com/kl4oFgz.jpeg",
-          "https://i.imgur.com/0xUABI0.jpeg",
-          "https://i.imgur.com/4jESiCg.jpeg",
-          "https://i.imgur.com/YstsoGo.jpeg",
-          "https://i.imgur.com/XmDZBi6.jpeg",
-          "https://i.imgur.com/C9FtlXQ.jpeg"
-        ]
-      }
+      "1": [
+        "https://i.imgur.com/MfRP2zF.jpeg",
+        "https://i.imgur.com/jXJed1O.jpeg",
+        "https://i.imgur.com/Rr2cvhD.jpeg",
+        "https://i.imgur.com/EtI9RUf.jpeg",
+        "https://i.imgur.com/a1irBKf.jpeg",
+        "https://i.imgur.com/iRn9rVc.jpeg",
+        "https://i.imgur.com/9YKPzIe.jpeg",
+        "https://i.imgur.com/uAk0X9R.jpeg",
+        "https://i.imgur.com/vPpeTUL.jpeg",
+        "https://i.imgur.com/YCWwQIJ.jpeg",
+        "https://i.imgur.com/iaYmgn0.jpeg",
+        "https://i.imgur.com/5zTPYdi.jpeg",
+        "https://i.imgur.com/Wlz5Yt5.jpeg",
+        "https://i.imgur.com/Q51pmoW.jpeg",
+        "https://i.imgur.com/LkoiQqV.jpeg",
+        "https://i.imgur.com/4GfjEpp.jpeg",
+        "https://i.imgur.com/6P2DShC.jpeg"
+      ],
+      "2": [
+        "https://i.imgur.com/OhcccCm.jpeg",
+        "https://i.imgur.com/m2hxsXt.jpeg",
+        "https://i.imgur.com/SyU97bd.jpeg",
+        "https://i.imgur.com/mEc5sDJ.jpeg",
+        "https://i.imgur.com/v6C7p62.jpeg",
+        "https://i.imgur.com/kl4oFgz.jpeg",
+        "https://i.imgur.com/0xUABI0.jpeg",
+        "https://i.imgur.com/4jESiCg.jpeg",
+        "https://i.imgur.com/YstsoGo.jpeg",
+        "https://i.imgur.com/XmDZBi6.jpeg",
+        "https://i.imgur.com/C9FtlXQ.jpeg"
+      ]
+    };
+
+    const titles = {
+      "1": "الفصل الأول (البداية)",
+      "2": "الفصل الثاني (الحاضر)"
     };
 
     let currentChapter = "1";
-    let currentPage = 0;
     let pageMode = "scroll";
 
-    const container = document.getElementById("imageContainer");
-    const title = document.getElementById("chapterTitle");
-
-    function renderChapter(chapterNum) {
+    function loadChapter(chapterNum) {
+      const container = document.getElementById("imageContainer");
+      const title = document.getElementById("chapterTitle");
       container.innerHTML = "";
-      currentPage = 0;
-      const pages = chapters[chapterNum].pages;
+      window.scrollTo(0, 0);
 
-      if (pageMode === "scroll") {
-        pages.forEach(url => {
-          const img = document.createElement("img");
-          img.src = url;
-          container.appendChild(img);
-        });
-      } else {
-        showSinglePage(pages[currentPage]);
-      }
+      chapters[chapterNum].forEach((src, i) => {
+        const img = document.createElement("img");
+        img.src = src;
+        img.alt = `صفحة ${i + 1}`;
+        if (pageMode === "single") {
+          img.style.display = i === 0 ? "block" : "none";
+        }
+        container.appendChild(img);
+      });
 
-      const text = document.querySelector(`#chapterSelect option[value="${chapterNum}"]`).innerText;
-      title.innerText = text;
+      title.textContent = titles[chapterNum];
     }
 
-    function changeChapter(chapterNum) {
-      currentChapter = chapterNum;
-      renderChapter(chapterNum);
-      window.scrollTo({top: 0, behavior: 'smooth'});
+    function changeChapter(val) {
+      currentChapter = val;
+      loadChapter(val);
     }
 
     function togglePageMode(mode) {
       pageMode = mode;
-      renderChapter(currentChapter);
+      loadChapter(currentChapter);
     }
 
-    function showSinglePage(url) {
-      container.innerHTML = "";
-      const img = document.createElement("img");
-      img.src = url;
-      container.appendChild(img);
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    document.addEventListener("click", function (e) {
+    document.addEventListener("click", (e) => {
       if (pageMode !== "single") return;
+      const imgs = document.querySelectorAll("#imageContainer img");
+      let currentIndex = [...imgs].findIndex(img => img.style.display === "block");
 
-      const x = e.clientX;
-      const half = window.innerWidth / 2;
-      const pages = chapters[currentChapter].pages;
-
-      if (x > half && currentPage < pages.length - 1) {
-        currentPage++;
-        showSinglePage(pages[currentPage]);
-      } else if (x < half && currentPage > 0) {
-        currentPage--;
-        showSinglePage(pages[currentPage]);
+      if (e.clientX < window.innerWidth / 2) {
+        currentIndex = Math.max(0, currentIndex - 1);
+      } else {
+        currentIndex = Math.min(imgs.length - 1, currentIndex + 1);
       }
+
+      imgs.forEach((img, i) => {
+        img.style.display = i === currentIndex ? "block" : "none";
+      });
     });
 
-    renderChapter("1");
+    loadChapter("1");
   </script>
 </body>
 </html>
