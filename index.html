@@ -2,66 +2,82 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>مهرقان الروح</title>
   <style>
     body {
       background-color: #222;
-      color: white;
+      color: #fff;
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      text-align: center;
-      overscroll-behavior: none;
+      overflow-x: hidden;
     }
     h1, h2 {
-      margin: 20px 0;
+      text-align: center;
+      margin: 20px 0 10px;
     }
-    #chapterSelect {
-      margin-bottom: 20px;
-      padding: 10px;
-      font-size: 16px;
+    .toolbar {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 10px auto;
+      flex-wrap: wrap;
+    }
+    select, label {
+      font-size: 14px;
+      padding: 8px;
+      border-radius: 6px;
+      border: none;
+      background-color: #333;
+      color: #fff;
     }
     .image-container {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
-      padding-bottom: 80px;
+      margin-bottom: 100px;
+    }
+    .image-container.single img {
+      display: none;
+    }
+    .image-container.single img.active {
+      display: block;
     }
     .image-container img {
-      width: 100%;
-      max-width: 600px;
+      max-width: 100%;
       height: auto;
-      border-radius: 4px;
+      margin-bottom: 20px;
+      transition: transform 0.2s ease;
     }
-    #scrollTopBtn {
+    #toTop {
       position: fixed;
       bottom: 20px;
       left: 20px;
-      background-color: #444;
-      color: white;
+      background: #444;
+      color: #fff;
       border: none;
-      padding: 12px 16px;
-      border-radius: 8px;
-      font-size: 14px;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 20px;
       cursor: pointer;
-      z-index: 1000;
+      z-index: 999;
     }
   </style>
 </head>
 <body>
   <h1>📖 مهرقان الروح 📖</h1>
   <h2 id="chapterTitle">الفصل الأول (البداية)</h2>
-
-  <select id="chapterSelect" onchange="changeChapter(this.value)">
-    <option value="1">الفصل الأول (البداية)</option>
-    <option value="2">الفصل الثاني (الحاضر)</option>
-  </select>
-
+  <div class="toolbar">
+    <select id="chapterSelect" onchange="changeChapter(this.value)">
+      <option value="1">الفصل 1 (البداية)</option>
+      <option value="2">الفصل 2 (الحاضر)</option>
+    </select>
+    <label><input type="checkbox" id="singleMode" onchange="toggleSingle()"> صفحة واحدة</label>
+  </div>
   <div class="image-container" id="imageContainer"></div>
-
-  <button id="scrollTopBtn" onclick="scrollToTop()">↑ للأعلى</button>
+  <button id="toTop" onclick="scrollToTop()">↑</button>
 
   <script>
     const chapters = {
@@ -85,7 +101,6 @@
         "https://i.imgur.com/6P2DShC.jpeg"
       ],
       "2": [
-        "https://i.imgur.com/OhcccCm.jpeg",
         "https://i.imgur.com/m2hxsXt.jpeg",
         "https://i.imgur.com/SyU97bd.jpeg",
         "https://i.imgur.com/mEc5sDJ.jpeg",
@@ -99,43 +114,82 @@
       ]
     };
 
-    function loadChapter(num) {
-      const container = document.getElementById("imageContainer");
-      container.innerHTML = "";
-      const chapterTitle = document.getElementById("chapterTitle");
-      chapterTitle.innerText = num === "1" ? "الفصل الأول (البداية)" : "الفصل الثاني (الحاضر)";
-      chapters[num].forEach(src => {
+    let currentChapter = "1";
+    let singlePageMode = false;
+    let currentIndex = 0;
+    let zoomLevel = 1;
+
+    const imageContainer = document.getElementById("imageContainer");
+    const chapterTitle = document.getElementById("chapterTitle");
+
+    function loadChapter(ch) {
+      currentChapter = ch;
+      currentIndex = 0;
+      chapterTitle.innerText = document.querySelector(`#chapterSelect option[value="${ch}"]`).text;
+      imageContainer.innerHTML = "";
+      chapters[ch].forEach((url, i) => {
         const img = document.createElement("img");
-        img.src = src;
-        container.appendChild(img);
+        img.src = url;
+        img.alt = `صفحة ${i + 1}`;
+        if (singlePageMode) img.classList.add("inactive");
+        if (i === 0 && singlePageMode) img.classList.add("active");
+        imageContainer.appendChild(img);
       });
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      scrollToTop();
+      updateSingleMode();
+    }
+
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function toggleSingle() {
+      singlePageMode = document.getElementById("singleMode").checked;
+      updateSingleMode();
+    }
+
+    function updateSingleMode() {
+      imageContainer.classList.toggle("single", singlePageMode);
+      const imgs = imageContainer.querySelectorAll("img");
+      imgs.forEach((img, i) => {
+        img.classList.remove("active");
+        if (!singlePageMode) img.classList.remove("inactive");
+      });
+      if (singlePageMode && imgs.length > 0) {
+        imgs[currentIndex].classList.add("active");
+      }
+    }
+
+    function navigateSinglePage(direction) {
+      if (!singlePageMode) return;
+      const imgs = imageContainer.querySelectorAll("img");
+      imgs[currentIndex].classList.remove("active");
+      currentIndex = Math.min(Math.max(0, currentIndex + direction), imgs.length - 1);
+      imgs[currentIndex].classList.add("active");
     }
 
     function changeChapter(val) {
       loadChapter(val);
     }
 
-    function scrollToTop() {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    // منع تكبير المتصفح باستخدام Ctrl + Scroll أو Ctrl + +/- أو Pinch
-    window.addEventListener("wheel", e => {
-      if (e.ctrlKey) e.preventDefault();
-    }, { passive: false });
-
-    window.addEventListener("keydown", e => {
-      if ((e.ctrlKey || e.metaKey) && ["+", "-", "=", "0"].includes(e.key)) {
-        e.preventDefault();
+    document.addEventListener("keydown", e => {
+      if (singlePageMode && (e.key === "ArrowRight" || e.key === "ArrowLeft")) {
+        navigateSinglePage(e.key === "ArrowRight" ? 1 : -1);
       }
     });
 
-    document.addEventListener("gesturestart", e => e.preventDefault()); // للهواتف
+    document.addEventListener("wheel", e => {
+      if (e.altKey) {
+        e.preventDefault();
+        zoomLevel += e.deltaY * -0.001;
+        zoomLevel = Math.max(0.5, Math.min(2, zoomLevel));
+        imageContainer.querySelectorAll("img").forEach(img => {
+          img.style.transform = `scale(${zoomLevel})`;
+        });
+      }
+    }, { passive: false });
 
-    window.onload = () => {
-      loadChapter("1");
-    };
+    loadChapter("1");
   </script>
 </body>
 </html>
