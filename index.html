@@ -3,24 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <title>مَهْرَقَانُ الرُّوح</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    :root {
-      --bg: linear-gradient(to bottom, #0a1530, #0e1c3f);
-      --text: white;
-    }
-
-    body.light {
-      --bg: linear-gradient(to bottom, #bcd4f7, #d7e7ff);
-      --text: #111;
-    }
-
     html, body {
       margin: 0;
       padding: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom, #0a1530, #0e1c3f);
+      color: white;
+      font-family: 'Arial', sans-serif;
       overflow-x: hidden;
     }
 
@@ -51,7 +41,34 @@
       flex-wrap: wrap;
     }
 
-    select, button.mode-toggle {
+    .zoom-buttons {
+      display: none;
+    }
+
+    @media (min-width: 768px) {
+      .zoom-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-bottom: 30px;
+      }
+
+      .zoom-buttons button {
+        background: #333;
+        color: white;
+        border: 1px solid #555;
+        padding: 8px 12px;
+        cursor: pointer;
+        border-radius: 5px;
+        font-size: 14px;
+      }
+
+      .zoom-buttons button:hover {
+        background: #555;
+      }
+    }
+
+    select {
       padding: 6px 12px;
       border-radius: 5px;
       background: #222;
@@ -60,32 +77,25 @@
       cursor: pointer;
     }
 
-    button.mode-toggle {
-      background: #444;
-      font-size: 14px;
-    }
-
     #image-container {
+      padding: 0;
       margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      width: 100%;
     }
 
     #image-container img {
-      max-width: 90%;
-      width: auto;
-      height: auto;
       display: block;
-      margin: 0 auto 10px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.12);
-      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.01) 0%, black 6%, black 94%, rgba(0,0,0,0.01) 100%);
-      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.01) 0%, black 6%, black 94%, rgba(0,0,0,0.01) 100%);
+      width: 100%;
+      height: auto;
+      padding: 0;
+      transform-origin: center center;
+      transition: transform 0.2s ease;
+      margin-bottom: 12px;
     }
 
     @media (max-width: 768px) {
       #image-container img {
-        margin-bottom: 8px;
+        margin-bottom: 12px;
       }
     }
 
@@ -100,12 +110,11 @@
       cursor: pointer;
       display: none;
       font-weight: bold;
-      z-index: 1000;
     }
 
     #nextChapterBtn {
       text-align: center;
-      margin: 40px auto 80px;
+      margin: 40px auto 60px;
       display: none;
     }
 
@@ -121,6 +130,14 @@
 
     #nextChapterBtn button:hover {
       background: #1558b0;
+    }
+
+    #comments {
+      max-width: 800px;
+      margin: 60px auto;
+      background: rgba(255,255,255,0.04);
+      padding: 20px;
+      border-radius: 8px;
     }
   </style>
 </head>
@@ -139,13 +156,21 @@
       <option value="single">صفحة واحدة</option>
       <option value="all" selected>عرض الكل</option>
     </select>
-    <button class="mode-toggle" onclick="toggleMode()">🌓 وضع القراءة</button>
+  </div>
+
+  <div class="zoom-buttons">
+    <button onclick="zoomOut()">تصغير</button>
+    <button onclick="zoomIn()">تكبير</button>
   </div>
 
   <div id="image-container"></div>
 
   <div id="nextChapterBtn">
     <button onclick="goToNextChapter()">الانتقال إلى الفصل التالي</button>
+  </div>
+
+  <div id="comments">
+    <div id="disqus_thread"></div>
   </div>
 
   <div id="backToTop">↑</div>
@@ -156,7 +181,10 @@
     const container = document.getElementById("image-container");
     const chapterTitle = document.getElementById("chapter-title");
     const backToTop = document.getElementById("backToTop");
+    const nextBtn = document.getElementById("nextChapterBtn");
+    const commentsDiv = document.getElementById("comments");
 
+    let zoomLevel = 1;
     let currentChapter = "ch1";
     let currentIndex = 0;
 
@@ -204,22 +232,40 @@
     function renderImages() {
       container.innerHTML = "";
       const mode = pageModeSelect.value || "all";
-      const pages = chapters[currentChapter].pages;
+      const { pages } = chapters[currentChapter];
 
       if (mode === "single") {
         const img = document.createElement("img");
         img.src = pages[currentIndex];
+        img.style.transform = `scale(${zoomLevel})`;
         container.appendChild(img);
       } else {
         pages.forEach(src => {
           const img = document.createElement("img");
           img.src = src;
+          img.style.transform = `scale(${zoomLevel})`;
           container.appendChild(img);
         });
       }
 
       chapterTitle.textContent = chapters[currentChapter].title;
-      document.getElementById("nextChapterBtn").style.display = currentChapter === "ch1" ? "block" : "none";
+      nextBtn.style.display = currentChapter === "ch1" ? "block" : "none";
+    }
+
+    function zoomIn() {
+      zoomLevel += 0.1;
+      applyZoom();
+    }
+
+    function zoomOut() {
+      zoomLevel = Math.max(0.5, zoomLevel - 0.1);
+      applyZoom();
+    }
+
+    function applyZoom() {
+      document.querySelectorAll("#image-container img").forEach(img => {
+        img.style.transform = `scale(${zoomLevel})`;
+      });
     }
 
     function goToNextChapter() {
@@ -230,25 +276,34 @@
     chapterSelect.addEventListener("change", () => {
       currentChapter = chapterSelect.value;
       currentIndex = 0;
+      zoomLevel = 1;
       renderImages();
       window.scrollTo(0, 0);
+      DISQUS.reset({
+        reload: true,
+        config: function () {
+          this.page.identifier = currentChapter;
+          this.page.url = window.location.href + "#" + currentChapter;
+        }
+      });
     });
 
     pageModeSelect.addEventListener("change", () => {
-      currentIndex = 0;
+      zoomLevel = 1;
       renderImages();
     });
 
     container.addEventListener("click", (e) => {
       if (pageModeSelect.value !== "single") return;
+      const width = window.innerWidth;
       const pages = chapters[currentChapter].pages;
-      const w = window.innerWidth;
-      if (e.clientX > w / 2 && currentIndex < pages.length - 1) {
+      if (e.clientX > width / 2 && currentIndex < pages.length - 1) {
         currentIndex++;
-      } else if (e.clientX <= w / 2 && currentIndex > 0) {
+        renderImages();
+      } else if (e.clientX <= width / 2 && currentIndex > 0) {
         currentIndex--;
+        renderImages();
       }
-      renderImages();
     });
 
     window.addEventListener("scroll", () => {
@@ -256,14 +311,25 @@
     });
 
     backToTop.addEventListener("click", () => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
-
-    function toggleMode() {
-      document.body.classList.toggle("light");
-    }
 
     renderImages();
   </script>
+
+  <!-- Disqus -->
+  <script>
+    var disqus_config = function () {
+      this.page.url = window.location.href;
+      this.page.identifier = currentChapter;
+    };
+    (function () {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mehreqan-al-rooh.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <noscript>فضلاً فعّل الجافا سكربت لرؤية التعليقات</noscript>
 </body>
 </html>
