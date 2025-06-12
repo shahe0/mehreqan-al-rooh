@@ -74,30 +74,26 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
+      gap: 0;
       padding: 0;
       margin: 0 auto;
       width: 100%;
       position: relative;
     }
 
-    #image-container img {
-      display: block;
+    .image-wrapper {
+      position: relative;
       width: 100%;
-      height: auto;
-      margin: 0;
-      padding: 0;
-      border-radius: 0;
-      max-width: 100%;
-      box-shadow:
-        0 -50px 50px rgba(255, 255, 255, 0.05),
-        0 50px 50px rgba(0, 0, 0, 0.2);
+      max-width: 900px;
+      overflow: hidden;
+      mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
     }
 
-    @media (min-width: 768px) {
-      #image-container img {
-        max-width: 900px;
-      }
+    .image-wrapper img {
+      width: 100%;
+      display: block;
+      border-radius: 0;
     }
 
     #backToTop {
@@ -218,14 +214,20 @@
       const { pages } = chapters[currentChapter];
 
       if (mode === "single") {
+        const wrapper = document.createElement("div");
+        wrapper.className = "image-wrapper";
         const img = document.createElement("img");
         img.src = pages[currentIndex];
-        container.appendChild(img);
+        wrapper.appendChild(img);
+        container.appendChild(wrapper);
       } else {
         pages.forEach((src) => {
+          const wrapper = document.createElement("div");
+          wrapper.className = "image-wrapper";
           const img = document.createElement("img");
           img.src = src;
-          container.appendChild(img);
+          wrapper.appendChild(img);
+          container.appendChild(wrapper);
         });
       }
 
