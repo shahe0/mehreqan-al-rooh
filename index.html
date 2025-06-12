@@ -1,17 +1,30 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>مَهْرَقَانُ الرُّوح</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
+    :root {
+      --bg-dark: linear-gradient(to bottom, #0a1124, #0d1a33);
+      --bg-light: linear-gradient(to bottom, #a3c5f1, #c5dbf4);
+      --text-dark: #ffffff;
+      --text-light: #0a1124;
+    }
+
     html, body {
       margin: 0;
       padding: 0;
-      background: linear-gradient(to bottom, #0a1124, #0d1a33);
-      color: white;
+      background: var(--bg-dark);
+      color: var(--text-dark);
       font-family: 'Arial', sans-serif;
       overflow-x: hidden;
+      transition: all 0.3s ease;
+    }
+
+    body.light {
+      background: var(--bg-light);
+      color: var(--text-light);
     }
 
     h1.title {
@@ -26,6 +39,7 @@
       font-family: monospace;
       margin-top: -10px;
       margin-bottom: 10px;
+      line-height: 1.4;
     }
 
     h3.chapter {
@@ -37,7 +51,7 @@
       display: flex;
       justify-content: center;
       gap: 15px;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
       flex-wrap: wrap;
     }
 
@@ -63,18 +77,26 @@
         font-size: 14px;
       }
 
-      .zoom-buttons button:hover {
-        background: #555;
+      body.light .zoom-buttons button {
+        background: #d0e0f8;
+        color: #222;
+        border: 1px solid #aaa;
       }
     }
 
-    select {
+    select, button.toggle-mode {
       padding: 6px 12px;
       border-radius: 5px;
       background: #222;
       color: white;
       border: 1px solid #444;
       cursor: pointer;
+    }
+
+    body.light select, body.light .toggle-mode {
+      background: #d0e0f8;
+      color: #222;
+      border: 1px solid #aaa;
     }
 
     #image-container {
@@ -102,7 +124,6 @@
         max-width: 900px;
       }
     }
-
     #backToTop {
       position: fixed;
       bottom: 15px;
@@ -114,11 +135,12 @@
       cursor: pointer;
       display: none;
       font-weight: bold;
+      z-index: 1000;
     }
 
     #nextChapterBtn {
       text-align: center;
-      margin: 40px auto 80px;
+      margin: 40px auto 60px;
       display: none;
     }
 
@@ -135,10 +157,39 @@
     #nextChapterBtn button:hover {
       background: #1558b0;
     }
+
+    .page-nav {
+      display: none;
+      justify-content: center;
+      gap: 20px;
+      margin: 30px auto;
+    }
+
+    .page-nav button {
+      padding: 10px 20px;
+      background: #666;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    body.light .page-nav button {
+      background: #c0d9f3;
+      color: #222;
+    }
+
+    #comments {
+      margin-top: 60px;
+      width: 100%;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0 20px;
+    }
   </style>
 </head>
 <body>
-
   <h1 class="title">مَهْرَقَانُ الرُّوح</h1>
   <h2 class="musnad">𐩣𐩺𐩧𐩬𐩡𐩬 𐩬𐩪𐩱𐩠𐩬</h2>
   <h3 class="chapter" id="chapter-title">الفصل الأول (البداية)</h3>
@@ -152,6 +203,7 @@
       <option value="single">صفحة واحدة</option>
       <option value="all" selected>عرض الكل</option>
     </select>
+    <button class="toggle-mode" onclick="toggleMode()">تبديل الوضع</button>
   </div>
 
   <div class="zoom-buttons">
@@ -161,146 +213,180 @@
 
   <div id="image-container"></div>
 
+  <div class="page-nav" id="pageNav">
+    <button onclick="prevPage()">← السابق</button>
+    <button onclick="nextPage()">التالي →</button>
+  </div>
+
   <div id="nextChapterBtn">
     <button onclick="goToNextChapter()">الانتقال إلى الفصل التالي</button>
   </div>
 
+  <div id="comments">
+    <div id="disqus_thread"></div>
+  </div>
+
   <div id="backToTop">↑</div>
+<script>
+  const chapterSelect = document.getElementById("chapter-select");
+  const pageModeSelect = document.getElementById("page-mode");
+  const container = document.getElementById("image-container");
+  const chapterTitle = document.getElementById("chapter-title");
+  const backToTop = document.getElementById("backToTop");
+  const nextBtn = document.getElementById("nextChapterBtn");
+  const pageNav = document.getElementById("pageNav");
 
-  <script>
-    const chapterSelect = document.getElementById("chapter-select");
-    const pageModeSelect = document.getElementById("page-mode");
-    const container = document.getElementById("image-container");
-    const chapterTitle = document.getElementById("chapter-title");
-    const backToTop = document.getElementById("backToTop");
-    const nextBtn = document.getElementById("nextChapterBtn");
+  let zoomLevel = 1;
+  let currentChapter = "ch1";
+  let currentIndex = 0;
 
-    let zoomLevel = 1;
+  const chapters = {
+    ch1: {
+      title: "الفصل الأول (البداية)",
+      pages: [
+        "https://i.imgur.com/MfRP2zF.jpeg",
+        "https://i.imgur.com/jXJed1O.jpeg",
+        "https://i.imgur.com/Rr2cvhD.jpeg",
+        "https://i.imgur.com/EtI9RUf.jpeg",
+        "https://i.imgur.com/a1irBKf.jpeg",
+        "https://i.imgur.com/iRn9rVc.jpeg",
+        "https://i.imgur.com/9YKPzIe.jpeg",
+        "https://i.imgur.com/uAk0X9R.jpeg",
+        "https://i.imgur.com/vPpeTUL.jpeg",
+        "https://i.imgur.com/YCWwQIJ.jpeg",
+        "https://i.imgur.com/iaYmgn0.jpeg",
+        "https://i.imgur.com/5zTPYdi.jpeg",
+        "https://i.imgur.com/Wlz5Yt5.jpeg",
+        "https://i.imgur.com/Q51pmoW.jpeg",
+        "https://i.imgur.com/LkoiQqV.jpeg",
+        "https://i.imgur.com/4GfjEpp.jpeg",
+        "https://i.imgur.com/6P2DShC.jpeg"
+      ]
+    },
+    ch2: {
+      title: "الفصل الثاني (الحاضر)",
+      pages: [
+        "https://i.imgur.com/OhcccCm.jpeg",
+        "https://i.imgur.com/m2hxsXt.jpeg",
+        "https://i.imgur.com/SyU97bd.jpeg",
+        "https://i.imgur.com/mEc5sDJ.jpeg",
+        "https://i.imgur.com/v6C7p62.jpeg",
+        "https://i.imgur.com/kl4oFgz.jpeg",
+        "https://i.imgur.com/0xUABI0.jpeg",
+        "https://i.imgur.com/4jESiCg.jpeg",
+        "https://i.imgur.com/YstsoGo.jpeg",
+        "https://i.imgur.com/XmDZBi6.jpeg",
+        "https://i.imgur.com/C9FtlXQ.jpeg"
+      ]
+    }
+  };
 
-    const chapters = {
-      ch1: {
-        title: "الفصل الأول (البداية)",
-        pages: [
-          "https://i.imgur.com/MfRP2zF.jpeg",
-          "https://i.imgur.com/jXJed1O.jpeg",
-          "https://i.imgur.com/Rr2cvhD.jpeg",
-          "https://i.imgur.com/EtI9RUf.jpeg",
-          "https://i.imgur.com/a1irBKf.jpeg",
-          "https://i.imgur.com/iRn9rVc.jpeg",
-          "https://i.imgur.com/9YKPzIe.jpeg",
-          "https://i.imgur.com/uAk0X9R.jpeg",
-          "https://i.imgur.com/vPpeTUL.jpeg",
-          "https://i.imgur.com/YCWwQIJ.jpeg",
-          "https://i.imgur.com/iaYmgn0.jpeg",
-          "https://i.imgur.com/5zTPYdi.jpeg",
-          "https://i.imgur.com/Wlz5Yt5.jpeg",
-          "https://i.imgur.com/Q51pmoW.jpeg",
-          "https://i.imgur.com/LkoiQqV.jpeg",
-          "https://i.imgur.com/4GfjEpp.jpeg",
-          "https://i.imgur.com/6P2DShC.jpeg"
-        ]
-      },
-      ch2: {
-        title: "الفصل الثاني (الحاضر)",
-        pages: [
-          "https://i.imgur.com/OhcccCm.jpeg",
-          "https://i.imgur.com/m2hxsXt.jpeg",
-          "https://i.imgur.com/SyU97bd.jpeg",
-          "https://i.imgur.com/mEc5sDJ.jpeg",
-          "https://i.imgur.com/v6C7p62.jpeg",
-          "https://i.imgur.com/kl4oFgz.jpeg",
-          "https://i.imgur.com/0xUABI0.jpeg",
-          "https://i.imgur.com/4jESiCg.jpeg",
-          "https://i.imgur.com/YstsoGo.jpeg",
-          "https://i.imgur.com/XmDZBi6.jpeg",
-          "https://i.imgur.com/C9FtlXQ.jpeg"
-        ]
-      }
-    };
+  function renderImages() {
+    container.innerHTML = "";
+    const mode = pageModeSelect.value || "all";
+    const { pages } = chapters[currentChapter];
 
-    let currentChapter = "ch1";
-    let currentIndex = 0;
-
-    function renderImages() {
-      container.innerHTML = "";
-      const mode = pageModeSelect.value || "all";
-      const { pages } = chapters[currentChapter];
-
-      if (mode === "single") {
+    if (mode === "single") {
+      const img = document.createElement("img");
+      img.src = pages[currentIndex];
+      img.style.width = `${zoomLevel * 100}%`;
+      container.appendChild(img);
+      pageNav.style.display = "flex";
+    } else {
+      pages.forEach((src) => {
         const img = document.createElement("img");
-        img.src = pages[currentIndex];
+        img.src = src;
         img.style.width = `${zoomLevel * 100}%`;
         container.appendChild(img);
-      } else {
-        pages.forEach((src, i) => {
-          const img = document.createElement("img");
-          img.src = src;
-          img.style.width = `${zoomLevel * 100}%`;
-          container.appendChild(img);
-        });
-      }
-
-      chapterTitle.textContent = chapters[currentChapter].title;
-      nextBtn.style.display = currentChapter === "ch1" ? "block" : "none";
-    }
-
-    function zoomIn() {
-      zoomLevel += 0.1;
-      applyZoom();
-    }
-
-    function zoomOut() {
-      zoomLevel = Math.max(0.5, zoomLevel - 0.1);
-      applyZoom();
-    }
-
-    function applyZoom() {
-      document.querySelectorAll("#image-container img").forEach(img => {
-        img.style.width = `${zoomLevel * 100}%`;
       });
+      pageNav.style.display = "none";
     }
 
-    function goToNextChapter() {
-      chapterSelect.value = "ch2";
-      chapterSelect.dispatchEvent(new Event("change"));
-    }
+    chapterTitle.textContent = chapters[currentChapter].title;
+    nextBtn.style.display = currentChapter === "ch1" ? "block" : "none";
+    loadDisqus(currentChapter);
+  }
 
-    chapterSelect.addEventListener("change", () => {
-      currentChapter = chapterSelect.value;
-      currentIndex = 0;
-      zoomLevel = 1;
-      renderImages();
-      window.scrollTo(0, 0);
+  function zoomIn() {
+    zoomLevel += 0.1;
+    applyZoom();
+  }
+
+  function zoomOut() {
+    zoomLevel = Math.max(0.5, zoomLevel - 0.1);
+    applyZoom();
+  }
+
+  function applyZoom() {
+    document.querySelectorAll("#image-container img").forEach(img => {
+      img.style.width = `${zoomLevel * 100}%`;
     });
+  }
 
-    pageModeSelect.addEventListener("change", () => {
-      zoomLevel = 1;
-      renderImages();
-    });
+  function goToNextChapter() {
+    chapterSelect.value = "ch2";
+    chapterSelect.dispatchEvent(new Event("change"));
+  }
 
-    container.addEventListener("click", (e) => {
-      if (pageModeSelect.value !== "single") return;
-      const width = window.innerWidth;
-      const pages = chapters[currentChapter].pages;
-      if (e.clientX > width / 2 && currentIndex < pages.length - 1) {
-        currentIndex++;
-        renderImages();
-      } else if (e.clientX <= width / 2 && currentIndex > 0) {
-        currentIndex--;
-        renderImages();
-      }
-    });
-
-    window.addEventListener("scroll", () => {
-      backToTop.style.display = window.scrollY > 200 ? "block" : "none";
-    });
-
-    backToTop.addEventListener("click", () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-
+  chapterSelect.addEventListener("change", () => {
+    currentChapter = chapterSelect.value;
+    currentIndex = 0;
+    zoomLevel = 1;
     renderImages();
-  </script>
+    window.scrollTo(0, 0);
+  });
 
+  pageModeSelect.addEventListener("change", () => {
+    zoomLevel = 1;
+    renderImages();
+  });
+
+  function nextPage() {
+    const pages = chapters[currentChapter].pages;
+    if (currentIndex < pages.length - 1) {
+      currentIndex++;
+      renderImages();
+    }
+  }
+
+  function prevPage() {
+    if (currentIndex > 0) {
+      currentIndex--;
+      renderImages();
+    }
+  }
+
+  window.addEventListener("scroll", () => {
+    backToTop.style.display = window.scrollY > 200 ? "block" : "none";
+  });
+
+  backToTop.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  function toggleMode() {
+    document.body.classList.toggle("light");
+  }
+
+  function loadDisqus(chapterId) {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: function () {
+          this.page.identifier = chapterId;
+          this.page.url = location.href.split('#')[0] + "?chapter=" + chapterId;
+        }
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://mehreqan-al-rooh.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  }
+
+  // تحميل الفصل الأول
+  renderImages();
+</script>
 </body>
 </html>
