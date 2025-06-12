@@ -7,7 +7,7 @@
   <style>
     :root {
       --bg-dark: linear-gradient(to bottom, #17223a, #1f2d4a);
-      --bg-light: linear-gradient(to bottom, #4dacc1, #88c8d8);
+      --bg-light: linear-gradient(to bottom, #6a92cc, #a0bde4);
       --text-dark: #ffffff;
       --text-light: #0a1124;
     }
@@ -74,7 +74,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 2px;
+      gap: 0.5px;
       padding: 0;
       margin: 0 auto;
       width: 100%;
@@ -86,24 +86,17 @@
       width: 100%;
       max-width: 900px;
       overflow: hidden;
-      padding: 6px;
-      background: rgba(255, 255, 255, 0.03);
+      background: rgba(255, 255, 255, 0.025);
       border-radius: 10px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-      animation: fadeIn 0.5s ease;
-      mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
-      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
+      box-shadow: 0 0 14px rgba(0, 0, 0, 0.3);
+      mask-image: linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%);
     }
 
     .image-wrapper img {
       width: 100%;
       display: block;
       border-radius: 8px;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
     }
 
     #backToTop {
