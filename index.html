@@ -3,14 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <title>مَهْرَقَانُ الرُّوح</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+    :root {
+      --bg: linear-gradient(to bottom, #0a1530, #0e1c3f);
+      --text: white;
+    }
+
+    body.light {
+      --bg: linear-gradient(to bottom, #bcd4f7, #d7e7ff);
+      --text: #111;
+    }
+
     html, body {
       margin: 0;
       padding: 0;
-      background: linear-gradient(to bottom, #0a1530, #0e1c3f);
-      color: white;
-      font-family: 'Arial', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, sans-serif;
       overflow-x: hidden;
     }
 
@@ -41,7 +51,7 @@
       flex-wrap: wrap;
     }
 
-    select {
+    select, button.mode-toggle {
       padding: 6px 12px;
       border-radius: 5px;
       background: #222;
@@ -50,22 +60,23 @@
       cursor: pointer;
     }
 
+    button.mode-toggle {
+      background: #444;
+      font-size: 14px;
+    }
+
     #image-container {
-      padding: 0;
       margin: 0 auto;
-      width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
 
     #image-container img {
-      display: block;
       width: 100%;
-      height: auto;
       max-width: 100%;
-      margin-bottom: 14px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      margin-bottom: 16px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
       -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.01) 0%, black 6%, black 94%, rgba(0,0,0,0.01) 100%);
       mask-image: linear-gradient(to bottom, rgba(0,0,0,0.01) 0%, black 6%, black 94%, rgba(0,0,0,0.01) 100%);
     }
@@ -126,6 +137,7 @@
       <option value="single">صفحة واحدة</option>
       <option value="all" selected>عرض الكل</option>
     </select>
+    <button class="mode-toggle" onclick="toggleMode()">🌓 وضع القراءة</button>
   </div>
 
   <div id="image-container"></div>
@@ -142,7 +154,6 @@
     const container = document.getElementById("image-container");
     const chapterTitle = document.getElementById("chapter-title");
     const backToTop = document.getElementById("backToTop");
-    const nextBtn = document.getElementById("nextChapterBtn");
 
     let currentChapter = "ch1";
     let currentIndex = 0;
@@ -206,7 +217,7 @@
       }
 
       chapterTitle.textContent = chapters[currentChapter].title;
-      nextBtn.style.display = currentChapter === "ch1" ? "block" : "none";
+      document.getElementById("nextChapterBtn").style.display = currentChapter === "ch1" ? "block" : "none";
     }
 
     function goToNextChapter() {
@@ -245,6 +256,10 @@
     backToTop.addEventListener("click", () => {
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
+
+    function toggleMode() {
+      document.body.classList.toggle("light");
+    }
 
     renderImages();
   </script>
