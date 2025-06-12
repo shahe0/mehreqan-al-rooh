@@ -6,8 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     :root {
-      --bg-dark: linear-gradient(to bottom, #06152b, #0a223f);
-      --bg-light: linear-gradient(to bottom, #b0cde7, #dcecff);
+      --bg-dark: linear-gradient(to bottom, #0a1124, #0d1a33);
+      --bg-light: linear-gradient(to bottom, #6a92cc, #a0bde4);
       --text-dark: #ffffff;
       --text-light: #0a1124;
     }
@@ -19,7 +19,7 @@
       color: var(--text-dark);
       font-family: 'Arial', sans-serif;
       overflow-x: hidden;
-      transition: background 0.3s ease;
+      transition: all 0.3s ease;
     }
 
     body.light {
@@ -74,21 +74,68 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
       padding: 0;
       margin: 0 auto;
       width: 100%;
+      position: relative;
     }
 
     #image-container img {
       display: block;
-      max-width: 90%;
+      width: 100%;
       height: auto;
-      margin: 0 auto;
-      border-radius: 4px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.01) 0%, black 6%, black 94%, rgba(0,0,0,0.01) 100%);
-      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.01) 0%, black 6%, black 94%, rgba(0,0,0,0.01) 100%);
+      margin: 0;
+      padding: 0;
+      border-radius: 0;
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+
+    @media (min-width: 768px) {
+      #image-container img {
+        max-width: 900px;
+      }
+    }
+
+    .click-zone {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 50%;
+      cursor: pointer;
+    }
+
+    .click-zone.left {
+      left: 0;
+    }
+
+    .click-zone.right {
+      right: 0;
+    }
+
+    .click-zone:hover::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 40px;
+      height: 40px;
+      background-size: 100%;
+      opacity: 0.2;
+    }
+
+    .click-zone.left:hover::after {
+      content: "←";
+      left: 10px;
+      font-size: 32px;
+      color: white;
+    }
+
+    .click-zone.right:hover::after {
+      content: "→";
+      right: 10px;
+      font-size: 32px;
+      color: white;
     }
 
     #backToTop {
@@ -128,7 +175,7 @@
 </head>
 <body>
   <h1 class="title">مَهْرَقَانُ الرُّوح</h1>
-  <h2 class="musnad">𐩣𐩠𐩧𐩤𐩱𐩬 | 𐩱𐩡𐩧𐩥𐩢</h2>
+  <h2 class="musnad">𐩣𐩺𐩧𐩬𐩡𐩬 𐩬𐩪𐩱𐩠𐩬</h2>
   <h3 class="chapter" id="chapter-title">الفصل الأول (البداية)</h3>
 
   <div class="controls">
@@ -140,10 +187,13 @@
       <option value="single">صفحة واحدة</option>
       <option value="all" selected>عرض الكل</option>
     </select>
-    <button class="toggle-mode" onclick="toggleMode()">🌓 تبديل الوضع</button>
+    <button class="toggle-mode" onclick="toggleMode()">تبديل الوضع</button>
   </div>
 
   <div id="image-container"></div>
+
+  <div class="click-zone left" onclick="prevPage()"></div>
+  <div class="click-zone right" onclick="nextPage()"></div>
 
   <div id="nextChapterBtn">
     <button onclick="goToNextChapter()">الانتقال إلى الفصل التالي</button>
@@ -159,6 +209,7 @@
     const backToTop = document.getElementById("backToTop");
     const nextBtn = document.getElementById("nextChapterBtn");
 
+    let zoomLevel = 1;
     let currentChapter = "ch1";
     let currentIndex = 0;
 
@@ -206,27 +257,48 @@
     function renderImages() {
       container.innerHTML = "";
       const mode = pageModeSelect.value || "all";
-      const pages = chapters[currentChapter].pages;
+      const { pages } = chapters[currentChapter];
 
       if (mode === "single") {
         const img = document.createElement("img");
         img.src = pages[currentIndex];
         container.appendChild(img);
+        document.querySelectorAll(".click-zone").forEach(zone => zone.style.display = "block");
       } else {
-        pages.forEach(src => {
+        pages.forEach((src) => {
           const img = document.createElement("img");
           img.src = src;
           container.appendChild(img);
         });
+        document.querySelectorAll(".click-zone").forEach(zone => zone.style.display = "none");
       }
 
       chapterTitle.textContent = chapters[currentChapter].title;
       nextBtn.style.display = currentChapter === "ch1" ? "block" : "none";
     }
 
+    function nextPage() {
+      const pages = chapters[currentChapter].pages;
+      if (currentIndex < pages.length - 1) {
+        currentIndex++;
+        renderImages();
+      }
+    }
+
+    function prevPage() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        renderImages();
+      }
+    }
+
     function goToNextChapter() {
       chapterSelect.value = "ch2";
       chapterSelect.dispatchEvent(new Event("change"));
+    }
+
+    function toggleMode() {
+      document.body.classList.toggle("light");
     }
 
     chapterSelect.addEventListener("change", () => {
@@ -241,29 +313,13 @@
       renderImages();
     });
 
-    container.addEventListener("click", (e) => {
-      if (pageModeSelect.value !== "single") return;
-      const pages = chapters[currentChapter].pages;
-      const w = window.innerWidth;
-      if (e.clientX > w / 2 && currentIndex < pages.length - 1) {
-        currentIndex++;
-      } else if (e.clientX <= w / 2 && currentIndex > 0) {
-        currentIndex--;
-      }
-      renderImages();
-    });
-
     window.addEventListener("scroll", () => {
       backToTop.style.display = window.scrollY > 200 ? "block" : "none";
     });
 
     backToTop.addEventListener("click", () => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
-
-    function toggleMode() {
-      document.body.classList.toggle("light");
-    }
 
     renderImages();
   </script>
