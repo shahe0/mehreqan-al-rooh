@@ -1,3 +1,167 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>مَهْرَقَانُ الرُّوح</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg-dark: linear-gradient(to bottom, #0a1124, #0d1a33);
+      --bg-light: linear-gradient(to bottom, #5f85c1, #8faeda);
+      --text-dark: #ffffff;
+      --text-light: #0a1124;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg-dark);
+      color: var(--text-dark);
+      font-family: 'Arial', sans-serif;
+      overflow-x: hidden;
+      transition: all 0.3s ease;
+    }
+
+    body.light {
+      background: var(--bg-light);
+      color: var(--text-light);
+    }
+
+    h1.title {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-top: 20px;
+    }
+
+    h2.musnad {
+      text-align: center;
+      font-size: 1.3rem;
+      font-family: monospace;
+      margin-top: -10px;
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+
+    h3.chapter {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    select, button.toggle-mode {
+      padding: 6px 12px;
+      border-radius: 5px;
+      background: #222;
+      color: white;
+      border: 1px solid #444;
+      cursor: pointer;
+    }
+
+    body.light select, body.light .toggle-mode {
+      background: #d0e0f8;
+      color: #222;
+      border: 1px solid #aaa;
+    }
+
+    #image-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 0;
+      margin: 0 auto;
+      width: 100%;
+      position: relative;
+    }
+
+    #image-container img {
+      display: block;
+      width: 100%;
+      height: auto;
+      margin: 0;
+      padding: 0;
+      border-radius: 0;
+    }
+
+    @media (min-width: 768px) {
+      #image-container img {
+        max-width: 900px;
+        margin: 0 auto;
+      }
+    }
+
+    .click-zone {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 50%;
+      cursor: pointer;
+    }
+
+    .click-zone.left {
+      left: 0;
+    }
+
+    .click-zone.right {
+      right: 0;
+    }
+
+    .click-zone:hover::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 40px;
+      height: 40px;
+      background-size: 100%;
+      opacity: 0.2;
+    }
+
+    .click-zone.left:hover::after {
+      content: "←";
+      left: 10px;
+      font-size: 32px;
+      color: white;
+    }
+
+    .click-zone.right:hover::after {
+      content: "→";
+      right: 10px;
+      font-size: 32px;
+      color: white;
+    }
+
+    #backToTop {
+      position: fixed;
+      bottom: 15px;
+      left: 15px;
+      background: #444;
+      color: white;
+      padding: 10px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      font-weight: bold;
+      z-index: 1000;
+    }
+
+    #comments {
+      margin-top: 50px;
+      width: 100%;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0 20px;
+    }
+  </style>
+</head>
 <body>
   <h1 class="title">مَهْرَقَانُ الرُّوح</h1>
   <h2 class="musnad">𐩣𐩺𐩧𐩬𐩡𐩬 𐩬𐩪𐩱𐩠𐩬</h2>
