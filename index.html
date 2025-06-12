@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>مَهْرَقَانُ الرُّوح</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     :root {
-      --bg-dark: linear-gradient(to bottom, #17223a, #1f2d4a);
-      --bg-light: linear-gradient(to bottom, #6a92cc, #a0bde4);
+      --bg-dark: linear-gradient(to bottom, #141e30, #1e2f47);
+      --bg-light: linear-gradient(to bottom, #8cb8f0, #c0d8f8);
       --text-dark: #ffffff;
       --text-light: #0a1124;
     }
@@ -35,7 +35,7 @@
 
     h2.musnad {
       text-align: center;
-      font-size: 1.4rem;
+      font-size: 1.2rem;
       font-family: monospace;
       margin-top: -10px;
       margin-bottom: 10px;
@@ -74,11 +74,10 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 0.5px;
+      gap: 6px;
       padding: 0;
       margin: 0 auto;
       width: 100%;
-      position: relative;
     }
 
     .image-wrapper {
@@ -86,11 +85,10 @@
       width: 100%;
       max-width: 900px;
       overflow: hidden;
-      background: rgba(255, 255, 255, 0.025);
       border-radius: 10px;
-      box-shadow: 0 0 14px rgba(0, 0, 0, 0.3);
-      mask-image: linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%);
-      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 6%, black 94%, transparent 100%);
+      box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+      mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
     }
 
     .image-wrapper img {
@@ -224,7 +222,7 @@
         wrapper.appendChild(img);
         container.appendChild(wrapper);
       } else {
-        pages.forEach((src) => {
+        pages.forEach(src => {
           const wrapper = document.createElement("div");
           wrapper.className = "image-wrapper";
           const img = document.createElement("img");
@@ -264,7 +262,7 @@
     });
 
     backToTop.addEventListener("click", () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: "smooth" });
     });
 
     renderImages();
