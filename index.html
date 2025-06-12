@@ -7,9 +7,9 @@
   <style>
     :root {
       --bg-dark: linear-gradient(to bottom, #0a1124, #0d1a33);
-      --bg-light: linear-gradient(to bottom, #66c0c9, #a7dee9);
+      --bg-light: linear-gradient(to bottom, #4dacc1, #88c8d8);
       --text-dark: #ffffff;
-      --text-light: #000000;
+      --text-light: #0a1124;
     }
 
     html, body {
@@ -19,7 +19,7 @@
       color: var(--text-dark);
       font-family: 'Arial', sans-serif;
       overflow-x: hidden;
-      transition: background 0.3s ease;
+      transition: all 0.3s ease;
     }
 
     body.light {
@@ -39,6 +39,7 @@
       font-family: monospace;
       margin-top: -10px;
       margin-bottom: 10px;
+      line-height: 1.4;
     }
 
     h3.chapter {
@@ -64,19 +65,20 @@
     }
 
     body.light select, body.light .toggle-mode {
-      background: #e2f0ff;
-      color: #000;
-      border: 1px solid #888;
+      background: #d0e0f8;
+      color: #222;
+      border: 1px solid #aaa;
     }
 
     #image-container {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
       padding: 0;
       margin: 0 auto;
       width: 100%;
+      position: relative;
     }
 
     #image-container img {
@@ -85,16 +87,30 @@
       height: auto;
       margin: 0;
       padding: 0;
-      border-radius: 6px;
+      border-radius: 0;
       box-shadow:
-        0 8px 14px rgba(0, 0, 0, 0.06),
-        0 -8px 14px rgba(0, 0, 0, 0.06);
+        0 -10px 20px rgba(0, 0, 0, 0.06),
+        0 10px 20px rgba(0, 0, 0, 0.06);
     }
 
     @media (min-width: 768px) {
       #image-container img {
         max-width: 900px;
       }
+    }
+
+    #backToTop {
+      position: fixed;
+      bottom: 15px;
+      left: 15px;
+      background: #444;
+      color: white;
+      padding: 10px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      font-weight: bold;
+      z-index: 1000;
     }
 
     #nextChapterBtn {
@@ -141,11 +157,14 @@
     <button onclick="goToNextChapter()">الانتقال إلى الفصل التالي</button>
   </div>
 
+  <div id="backToTop">↑</div>
+
   <script>
     const chapterSelect = document.getElementById("chapter-select");
     const pageModeSelect = document.getElementById("page-mode");
     const container = document.getElementById("image-container");
     const chapterTitle = document.getElementById("chapter-title");
+    const backToTop = document.getElementById("backToTop");
     const nextBtn = document.getElementById("nextChapterBtn");
 
     let currentChapter = "ch1";
@@ -202,7 +221,7 @@
         img.src = pages[currentIndex];
         container.appendChild(img);
       } else {
-        pages.forEach(src => {
+        pages.forEach((src) => {
           const img = document.createElement("img");
           img.src = src;
           container.appendChild(img);
@@ -211,6 +230,15 @@
 
       chapterTitle.textContent = chapters[currentChapter].title;
       nextBtn.style.display = currentChapter === "ch1" ? "block" : "none";
+    }
+
+    function goToNextChapter() {
+      chapterSelect.value = "ch2";
+      chapterSelect.dispatchEvent(new Event("change"));
+    }
+
+    function toggleMode() {
+      document.body.classList.toggle("light");
     }
 
     chapterSelect.addEventListener("change", () => {
@@ -225,14 +253,13 @@
       renderImages();
     });
 
-    function toggleMode() {
-      document.body.classList.toggle("light");
-    }
+    window.addEventListener("scroll", () => {
+      backToTop.style.display = window.scrollY > 200 ? "block" : "none";
+    });
 
-    function goToNextChapter() {
-      chapterSelect.value = "ch2";
-      chapterSelect.dispatchEvent(new Event("change"));
-    }
+    backToTop.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
 
     renderImages();
   </script>
