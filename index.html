@@ -7,7 +7,7 @@
   <style>
     :root {
       --bg-dark: linear-gradient(to bottom, #0a1124, #0d1a33);
-      --bg-light: linear-gradient(to bottom, #6a92cc, #a0bde4);
+      --bg-light: linear-gradient(to bottom, #5f85c1, #8faeda);
       --text-dark: #ffffff;
       --text-light: #0a1124;
     }
@@ -35,7 +35,7 @@
 
     h2.musnad {
       text-align: center;
-      font-size: 1.4rem;
+      font-size: 1.3rem;
       font-family: monospace;
       margin-top: -10px;
       margin-bottom: 10px;
@@ -74,7 +74,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       padding: 0;
       margin: 0 auto;
       width: 100%;
@@ -88,12 +88,12 @@
       margin: 0;
       padding: 0;
       border-radius: 0;
-      border: 1px solid rgba(255,255,255,0.04);
     }
 
     @media (min-width: 768px) {
       #image-container img {
         max-width: 900px;
+        margin: 0 auto;
       }
     }
 
@@ -152,24 +152,13 @@
       z-index: 1000;
     }
 
-    #nextChapterBtn {
-      text-align: center;
-      margin: 40px auto 60px;
-      display: none;
-    }
-
-    #nextChapterBtn button {
-      padding: 12px 24px;
-      font-size: 16px;
-      background: #1a73e8;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    #nextChapterBtn button:hover {
-      background: #1558b0;
+    #comments {
+      margin-top: 50px;
+      width: 100%;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0 20px;
     }
   </style>
 </head>
@@ -191,28 +180,16 @@
   </div>
 
   <div id="image-container"></div>
-
   <div class="click-zone left" onclick="prevPage()"></div>
   <div class="click-zone right" onclick="nextPage()"></div>
 
-  <div id="nextChapterBtn">
-    <button onclick="goToNextChapter()">الانتقال إلى الفصل التالي</button>
-  </div>
-
   <div id="backToTop">↑</div>
 
+  <div id="comments">
+    <div id="disqus_thread"></div>
+  </div>
+
   <script>
-    const chapterSelect = document.getElementById("chapter-select");
-    const pageModeSelect = document.getElementById("page-mode");
-    const container = document.getElementById("image-container");
-    const chapterTitle = document.getElementById("chapter-title");
-    const backToTop = document.getElementById("backToTop");
-    const nextBtn = document.getElementById("nextChapterBtn");
-
-    let zoomLevel = 1;
-    let currentChapter = "ch1";
-    let currentIndex = 0;
-
     const chapters = {
       ch1: {
         title: "الفصل الأول (البداية)",
@@ -254,29 +231,36 @@
       }
     };
 
+    const chapterSelect = document.getElementById("chapter-select");
+    const pageModeSelect = document.getElementById("page-mode");
+    const container = document.getElementById("image-container");
+    const chapterTitle = document.getElementById("chapter-title");
+    const backToTop = document.getElementById("backToTop");
+
+    let currentChapter = "ch1";
+    let currentIndex = 0;
+
     function renderImages() {
       container.innerHTML = "";
-      const mode = pageModeSelect.value || "all";
-      const { pages } = chapters[currentChapter];
+      const mode = pageModeSelect.value;
+      const pages = chapters[currentChapter].pages;
 
       if (mode === "single") {
         const img = document.createElement("img");
         img.src = pages[currentIndex];
-        img.style.width = `${zoomLevel * 100}%`;
         container.appendChild(img);
-        document.querySelectorAll(".click-zone").forEach(zone => zone.style.display = "block");
+        document.querySelectorAll('.click-zone').forEach(z => z.style.display = 'block');
       } else {
-        pages.forEach((src) => {
+        pages.forEach(src => {
           const img = document.createElement("img");
           img.src = src;
-          img.style.width = `${zoomLevel * 100}%`;
           container.appendChild(img);
         });
-        document.querySelectorAll(".click-zone").forEach(zone => zone.style.display = "none");
+        document.querySelectorAll('.click-zone').forEach(z => z.style.display = 'none');
       }
 
       chapterTitle.textContent = chapters[currentChapter].title;
-      nextBtn.style.display = currentChapter === "ch1" ? "block" : "none";
+      loadDisqus(currentChapter);
     }
 
     function nextPage() {
@@ -294,19 +278,9 @@
       }
     }
 
-    function goToNextChapter() {
-      chapterSelect.value = "ch2";
-      chapterSelect.dispatchEvent(new Event("change"));
-    }
-
-    function toggleMode() {
-      document.body.classList.toggle("light");
-    }
-
     chapterSelect.addEventListener("change", () => {
       currentChapter = chapterSelect.value;
       currentIndex = 0;
-      zoomLevel = 1;
       renderImages();
       window.scrollTo(0, 0);
     });
@@ -316,13 +290,34 @@
       renderImages();
     });
 
+    backToTop.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
     window.addEventListener("scroll", () => {
       backToTop.style.display = window.scrollY > 200 ? "block" : "none";
     });
 
-    backToTop.addEventListener("click", () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+    function toggleMode() {
+      document.body.classList.toggle("light");
+    }
+
+    function loadDisqus(chapterId) {
+      if (window.DISQUS) {
+        DISQUS.reset({
+          reload: true,
+          config: function () {
+            this.page.identifier = chapterId;
+            this.page.url = "https://shahe0.github.io/mehreqan-al-rooh/?chapter=" + chapterId;
+          }
+        });
+      } else {
+        const d = document, s = d.createElement('script');
+        s.src = 'https://mehreqan-al-rooh.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+      }
+    }
 
     renderImages();
   </script>
