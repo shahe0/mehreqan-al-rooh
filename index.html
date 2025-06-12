@@ -7,9 +7,9 @@
   <style>
     :root {
       --bg-dark: linear-gradient(to bottom, #0a1124, #0d1a33);
-      --bg-light: linear-gradient(to bottom, #a9c7f3, #d1e3ff);
+      --bg-light: linear-gradient(to bottom, #66c0c9, #a7dee9);
       --text-dark: #ffffff;
-      --text-light: #111111;
+      --text-light: #000000;
     }
 
     html, body {
@@ -19,7 +19,7 @@
       color: var(--text-dark);
       font-family: 'Arial', sans-serif;
       overflow-x: hidden;
-      transition: all 0.3s ease;
+      transition: background 0.3s ease;
     }
 
     body.light {
@@ -39,7 +39,6 @@
       font-family: monospace;
       margin-top: -10px;
       margin-bottom: 10px;
-      line-height: 1.4;
     }
 
     h3.chapter {
@@ -55,7 +54,7 @@
       flex-wrap: wrap;
     }
 
-    select, button {
+    select, button.toggle-mode {
       padding: 6px 12px;
       border-radius: 5px;
       background: #222;
@@ -64,10 +63,10 @@
       cursor: pointer;
     }
 
-    body.light select, body.light button {
-      background: #e1ecfa;
+    body.light select, body.light .toggle-mode {
+      background: #e2f0ff;
       color: #000;
-      border: 1px solid #aaa;
+      border: 1px solid #888;
     }
 
     #image-container {
@@ -86,30 +85,16 @@
       height: auto;
       margin: 0;
       padding: 0;
-      border-radius: 8px;
+      border-radius: 6px;
       box-shadow:
-        0 2px 10px rgba(0, 0, 0, 0.08),
-        0 0 15px rgba(0, 0, 0, 0.04);
+        0 8px 14px rgba(0, 0, 0, 0.06),
+        0 -8px 14px rgba(0, 0, 0, 0.06);
     }
 
     @media (min-width: 768px) {
       #image-container img {
         max-width: 900px;
       }
-    }
-
-    #backToTop {
-      position: fixed;
-      bottom: 15px;
-      left: 15px;
-      background: #444;
-      color: white;
-      padding: 10px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: none;
-      font-weight: bold;
-      z-index: 1000;
     }
 
     #nextChapterBtn {
@@ -147,7 +132,7 @@
       <option value="single">صفحة واحدة</option>
       <option value="all" selected>عرض الكل</option>
     </select>
-    <button onclick="toggleTheme()">تبديل الوضع</button>
+    <button class="toggle-mode" onclick="toggleMode()">تبديل الوضع</button>
   </div>
 
   <div id="image-container"></div>
@@ -156,14 +141,11 @@
     <button onclick="goToNextChapter()">الانتقال إلى الفصل التالي</button>
   </div>
 
-  <div id="backToTop">↑</div>
-
   <script>
     const chapterSelect = document.getElementById("chapter-select");
     const pageModeSelect = document.getElementById("page-mode");
     const container = document.getElementById("image-container");
     const chapterTitle = document.getElementById("chapter-title");
-    const backToTop = document.getElementById("backToTop");
     const nextBtn = document.getElementById("nextChapterBtn");
 
     let currentChapter = "ch1";
@@ -231,15 +213,6 @@
       nextBtn.style.display = currentChapter === "ch1" ? "block" : "none";
     }
 
-    function goToNextChapter() {
-      chapterSelect.value = "ch2";
-      chapterSelect.dispatchEvent(new Event("change"));
-    }
-
-    function toggleTheme() {
-      document.body.classList.toggle("light");
-    }
-
     chapterSelect.addEventListener("change", () => {
       currentChapter = chapterSelect.value;
       currentIndex = 0;
@@ -252,13 +225,14 @@
       renderImages();
     });
 
-    window.addEventListener("scroll", () => {
-      backToTop.style.display = window.scrollY > 200 ? "block" : "none";
-    });
+    function toggleMode() {
+      document.body.classList.toggle("light");
+    }
 
-    backToTop.addEventListener("click", () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+    function goToNextChapter() {
+      chapterSelect.value = "ch2";
+      chapterSelect.dispatchEvent(new Event("change"));
+    }
 
     renderImages();
   </script>
