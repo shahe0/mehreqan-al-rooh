@@ -55,7 +55,7 @@
       flex-wrap: wrap;
     }
 
-    select, button.toggle-mode {
+    select, button.toggle-mode, button.toggle-fullscreen {
       padding: 6px 12px;
       border-radius: 5px;
       background: #222;
@@ -64,7 +64,9 @@
       cursor: pointer;
     }
 
-    body.light select, body.light .toggle-mode {
+    body.light select,
+    body.light .toggle-mode,
+    body.light .toggle-fullscreen {
       background: #d0e0f8;
       color: #222;
       border: 1px solid #aaa;
@@ -88,11 +90,11 @@
       overflow: hidden;
       border-radius: 8px;
       scroll-snap-align: start;
-      mask-image: 
-        linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%),
+      mask-image:
+        linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%),
         linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
-      -webkit-mask-image: 
-        linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%),
+      -webkit-mask-image:
+        linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%),
         linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
     }
 
@@ -171,6 +173,7 @@
       <option value="all" selected>عرض الكل</option>
     </select>
     <button class="toggle-mode" onclick="toggleMode()">تبديل الوضع</button>
+    <button class="toggle-fullscreen" onclick="toggleFullScreen()">ملء الشاشة</button>
   </div>
 
   <div id="image-container"></div>
@@ -267,6 +270,14 @@
 
     function toggleMode() {
       document.body.classList.toggle("light");
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
     }
 
     chapterSelect.addEventListener("change", () => {
