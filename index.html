@@ -8,77 +8,57 @@
     :root {
       --bg-dark: linear-gradient(to bottom, #0a1124, #0d1a33);
       --bg-light: linear-gradient(to bottom, #6a92cc, #a0bde4);
-      --text-dark: #ffffff;
-      --text-light: #0a1124;
     }
 
-    html, body {
+    body {
       margin: 0;
       padding: 0;
+      font-family: Arial, sans-serif;
       background: var(--bg-dark);
-      color: var(--text-dark);
-      font-family: 'Arial', sans-serif;
-      overflow-x: hidden;
-      transition: all 0.3s ease;
+      color: white;
     }
 
     body.light {
       background: var(--bg-light);
-      color: var(--text-light);
+      color: #111;
     }
 
-    h1.title {
+    h1, h2, h3 {
       text-align: center;
-      font-size: 2.5rem;
-      margin-top: 20px;
-    }
-
-    h2.musnad {
-      text-align: center;
-      font-size: 1.2rem;
-      font-family: monospace;
-      margin-top: -10px;
-      margin-bottom: 10px;
-      line-height: 1.4;
-    }
-
-    h3.chapter {
-      text-align: center;
-      margin-bottom: 20px;
+      margin: 10px 0;
     }
 
     .controls {
       display: flex;
       justify-content: center;
-      gap: 15px;
-      margin-bottom: 20px;
+      gap: 10px;
       flex-wrap: wrap;
+      margin-bottom: 20px;
     }
 
-    select, button.toggle-mode, button.fullscreen-mode {
+    select, button {
       padding: 6px 12px;
       border-radius: 5px;
+      border: 1px solid #555;
       background: #222;
       color: white;
-      border: 1px solid #444;
       cursor: pointer;
     }
 
-    body.light select, body.light .toggle-mode, body.light .fullscreen-mode {
-      background: #d0e0f8;
-      color: #222;
-      border: 1px solid #aaa;
+    body.light select, body.light button {
+      background: #e0ebff;
+      color: #111;
+      border: 1px solid #999;
     }
 
     #image-container {
       display: flex;
       flex-direction: column;
       align-items: center;
+      gap: 6px;
       padding: 0;
       margin: 0 auto;
       width: 100%;
-      scroll-snap-type: y mandatory;
-      gap: 6px;
     }
 
     .image-wrapper {
@@ -87,100 +67,56 @@
       max-width: 900px;
       overflow: hidden;
       border-radius: 8px;
-      scroll-snap-align: start;
     }
 
     .image-wrapper img {
       width: 100%;
-      max-width: 100%;
-      object-fit: contain;
       display: block;
-      image-rendering: -webkit-optimize-contrast;
       border-radius: 8px;
     }
 
-    /* شادو زوايا */
-    .image-wrapper.normal::before {
+    /* ظل الزوايا لكل الصور */
+    .shadow-corners::before, .shadow-corners::after {
       content: "";
       position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
+      width: 100%;
+      height: 100%;
       pointer-events: none;
-      background:
-        radial-gradient(circle at top left, rgba(0,0,0,0.2), transparent 40%),
-        radial-gradient(circle at top right, rgba(0,0,0,0.2), transparent 40%),
-        radial-gradient(circle at bottom left, rgba(0,0,0,0.2), transparent 40%),
-        radial-gradient(circle at bottom right, rgba(0,0,0,0.2), transparent 40%);
+      background: radial-gradient(circle at top left, rgba(0,0,0,0.2), transparent 40%),
+                  radial-gradient(circle at top right, rgba(0,0,0,0.2), transparent 40%),
+                  radial-gradient(circle at bottom left, rgba(0,0,0,0.2), transparent 40%),
+                  radial-gradient(circle at bottom right, rgba(0,0,0,0.2), transparent 40%);
     }
 
-    /* شادو من الأعلى فقط */
-    .image-wrapper.first::before {
+    /* أول صفحة - شادو فوق */
+    .first-page::before {
       content: "";
       position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 50px;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 40px;
       background: linear-gradient(to bottom, rgba(0,0,0,0.3), transparent);
       pointer-events: none;
     }
 
-    /* شادو من الأسفل فقط */
-    .image-wrapper.last::before {
+    /* آخر صفحة - شادو تحت */
+    .last-page::after {
       content: "";
       position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 50px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 40px;
       background: linear-gradient(to top, rgba(0,0,0,0.3), transparent);
       pointer-events: none;
-    }
-
-    #backToTop {
-      position: fixed;
-      bottom: 15px;
-      left: 15px;
-      background: #444;
-      color: white;
-      padding: 10px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: none;
-      font-weight: bold;
-      z-index: 1000;
-    }
-
-    #nextChapterBtn {
-      text-align: center;
-      margin: 40px auto 60px;
-      display: none;
-    }
-
-    #nextChapterBtn button {
-      padding: 12px 24px;
-      font-size: 16px;
-      background: #1a73e8;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    #nextChapterBtn button:hover {
-      background: #1558b0;
-    }
-
-    @media (max-width: 768px) {
-      #image-container {
-        gap: 2px !important;
-      }
-
-      .image-wrapper {
-        border-radius: 0;
-      }
     }
   </style>
 </head>
 <body>
-  <h1 class="title">مَهْرَقَانُ الرُّوح</h1>
-  <h2 class="musnad">𐩣𐩠𐩧𐩤𐩱𐩬 | 𐩱𐩡𐩧𐩥𐩢</h2>
-  <h3 class="chapter" id="chapter-title">الفصل الأول (البداية)</h3>
+  <h1>مَهْرَقَانُ الرُّوح</h1>
+  <h2>𐩣𐩠𐩧𐩤𐩱𐩬 | 𐩱𐩡𐩧𐩥𐩢</h2>
+  <h3 id="chapter-title">الفصل الأول (البداية)</h3>
 
   <div class="controls">
     <select id="chapter-select">
@@ -191,29 +127,12 @@
       <option value="single">صفحة واحدة</option>
       <option value="all" selected>عرض الكل</option>
     </select>
-    <button class="toggle-mode" onclick="toggleMode()">تبديل الوضع</button>
-    <button class="fullscreen-mode" onclick="toggleFullScreen()">ملء الشاشة</button>
+    <button onclick="toggleMode()">تبديل الوضع</button>
   </div>
 
   <div id="image-container"></div>
 
-  <div id="nextChapterBtn">
-    <button onclick="goToNextChapter()">الانتقال إلى الفصل التالي</button>
-  </div>
-
-  <div id="backToTop">↑</div>
-
   <script>
-    const chapterSelect = document.getElementById("chapter-select");
-    const pageModeSelect = document.getElementById("page-mode");
-    const container = document.getElementById("image-container");
-    const chapterTitle = document.getElementById("chapter-title");
-    const backToTop = document.getElementById("backToTop");
-    const nextBtn = document.getElementById("nextChapterBtn");
-
-    let currentChapter = "ch1";
-    let currentIndex = 0;
-
     const chapters = {
       ch1: {
         title: "الفصل الأول (البداية)",
@@ -255,44 +174,49 @@
       }
     };
 
+    const chapterSelect = document.getElementById("chapter-select");
+    const pageModeSelect = document.getElementById("page-mode");
+    const chapterTitle = document.getElementById("chapter-title");
+    const container = document.getElementById("image-container");
+
+    let currentChapter = "ch1";
+    let currentIndex = 0;
+
     function renderImages() {
       container.innerHTML = "";
-      const mode = pageModeSelect.value || "all";
-      const { pages } = chapters[currentChapter];
-
-      pages.forEach((src, index) => {
-        const wrapper = document.createElement("div");
-        wrapper.className = "image-wrapper";
-
-        if (index === 0) wrapper.classList.add("first");
-        else if (index === pages.length - 1) wrapper.classList.add("last");
-        else wrapper.classList.add("normal");
-
-        const img = document.createElement("img");
-        img.src = src;
-        wrapper.appendChild(img);
-        container.appendChild(wrapper);
-      });
-
+      const mode = pageModeSelect.value;
+      const pages = chapters[currentChapter].pages;
       chapterTitle.textContent = chapters[currentChapter].title;
-      nextBtn.style.display = currentChapter === "ch1" ? "block" : "none";
+
+      if (mode === "single") {
+        createImageWrapper(pages[currentIndex], 0, pages.length);
+      } else {
+        pages.forEach((src, i) => {
+          createImageWrapper(src, i, pages.length);
+        });
+      }
     }
 
-    function goToNextChapter() {
-      chapterSelect.value = "ch2";
-      chapterSelect.dispatchEvent(new Event("change"));
+    function createImageWrapper(src, index, total) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "image-wrapper";
+
+      if (index === 0) {
+        wrapper.classList.add("first-page");
+      } else if (index === total - 1) {
+        wrapper.classList.add("last-page");
+      } else {
+        wrapper.classList.add("shadow-corners");
+      }
+
+      const img = document.createElement("img");
+      img.src = src;
+      wrapper.appendChild(img);
+      container.appendChild(wrapper);
     }
 
     function toggleMode() {
       document.body.classList.toggle("light");
-    }
-
-    function toggleFullScreen() {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-      } else {
-        document.exitFullscreen();
-      }
     }
 
     chapterSelect.addEventListener("change", () => {
@@ -305,14 +229,6 @@
     pageModeSelect.addEventListener("change", () => {
       currentIndex = 0;
       renderImages();
-    });
-
-    window.addEventListener("scroll", () => {
-      backToTop.style.display = window.scrollY > 200 ? "block" : "none";
-    });
-
-    backToTop.addEventListener("click", () => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
     });
 
     renderImages();
