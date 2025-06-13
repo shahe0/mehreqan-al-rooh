@@ -92,7 +92,7 @@
       max-width: 900px;
       overflow: hidden;
       border-radius: 10px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15); /* شادو للزوايا */
       mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
       -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
     }
@@ -100,7 +100,28 @@
     .image-wrapper img {
       width: 100%;
       display: block;
-      border-radius: 8px;
+      border-radius: 10px;
+    }
+
+    #fullscreen-btn {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      #fullscreen-btn {
+        position: fixed;
+        bottom: 70px;
+        left: 15px;
+        z-index: 999;
+        background: #1a73e8;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 10px 16px;
+        font-size: 14px;
+        cursor: pointer;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      }
     }
 
     #backToTop {
@@ -154,6 +175,8 @@
     </select>
     <button class="toggle-mode" onclick="toggleMode()">تبديل الوضع</button>
   </div>
+
+  <button id="fullscreen-btn" onclick="enterFullscreen()">ملء الشاشة</button>
 
   <div id="image-container"></div>
 
@@ -249,6 +272,13 @@
 
     function toggleMode() {
       document.body.classList.toggle("light");
+    }
+
+    function enterFullscreen() {
+      const el = document.documentElement;
+      if (el.requestFullscreen) el.requestFullscreen();
+      else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+      else if (el.msRequestFullscreen) el.msRequestFullscreen();
     }
 
     chapterSelect.addEventListener("change", () => {
