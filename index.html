@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>مَهْرَقَانُ الرُّوح</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     :root {
       --bg-dark: linear-gradient(to bottom, #0a1124, #0d1a33);
@@ -55,7 +55,7 @@
       flex-wrap: wrap;
     }
 
-    select, button.toggle-mode, button.fullscreen-btn {
+    select, button.toggle-mode, button.fullscreen {
       padding: 6px 12px;
       border-radius: 5px;
       background: #222;
@@ -64,7 +64,9 @@
       cursor: pointer;
     }
 
-    body.light select, body.light button.toggle-mode, body.light button.fullscreen-btn {
+    body.light select,
+    body.light button.toggle-mode,
+    body.light button.fullscreen {
       background: #d0e0f8;
       color: #222;
       border: 1px solid #aaa;
@@ -78,7 +80,7 @@
       margin: 0 auto;
       width: 100%;
       scroll-snap-type: y mandatory;
-      gap: 8px;
+      gap: 6px;
     }
 
     .image-wrapper {
@@ -92,21 +94,34 @@
 
     .image-wrapper img {
       width: 100%;
-      max-width: 100%;
-      object-fit: contain;
-      image-rendering: -webkit-optimize-contrast;
       display: block;
       border-radius: 8px;
+      object-fit: contain;
+      image-rendering: -webkit-optimize-contrast;
+      mask-image:
+        linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%),
+        linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+      -webkit-mask-image:
+        linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%),
+        linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
     }
 
-    .top-fade {
-      mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 100%);
-      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 100%);
+    .first img {
+      mask-image:
+        linear-gradient(to bottom, transparent 0%, black 95%),
+        linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+      -webkit-mask-image:
+        linear-gradient(to bottom, transparent 0%, black 95%),
+        linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
     }
 
-    .bottom-fade {
-      mask-image: linear-gradient(to bottom, black 0%, black 90%, transparent 100%);
-      -webkit-mask-image: linear-gradient(to bottom, black 0%, black 90%, transparent 100%);
+    .last img {
+      mask-image:
+        linear-gradient(to bottom, black 5%, transparent 100%),
+        linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+      -webkit-mask-image:
+        linear-gradient(to bottom, black 5%, transparent 100%),
+        linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
     }
 
     #backToTop {
@@ -121,11 +136,6 @@
       display: none;
       font-weight: bold;
       z-index: 1000;
-      transition: all 0.3s ease;
-    }
-
-    #backToTop:hover {
-      background: #1a73e8;
     }
 
     #nextChapterBtn {
@@ -157,6 +167,16 @@
         margin-bottom: 2px !important;
         border-radius: 0;
       }
+
+      .fullscreen {
+        display: inline-block;
+      }
+    }
+
+    @media (min-width: 769px) {
+      .fullscreen {
+        display: none;
+      }
     }
   </style>
 </head>
@@ -175,7 +195,7 @@
       <option value="all" selected>عرض الكل</option>
     </select>
     <button class="toggle-mode" onclick="toggleMode()">تبديل الوضع</button>
-    <button class="fullscreen-btn" onclick="toggleFullscreen()">ملء الشاشة</button>
+    <button class="fullscreen" onclick="goFullScreen()">ملء الشاشة</button>
   </div>
 
   <div id="image-container"></div>
@@ -254,12 +274,10 @@
         pages.forEach((src, i) => {
           const wrapper = document.createElement("div");
           wrapper.className = "image-wrapper";
+          if (i === 0) wrapper.classList.add("first");
+          if (i === pages.length - 1) wrapper.classList.add("last");
           const img = document.createElement("img");
           img.src = src;
-
-          if (i === 0) img.classList.add("top-fade");
-          if (i === pages.length - 1) img.classList.add("bottom-fade");
-
           wrapper.appendChild(img);
           container.appendChild(wrapper);
         });
@@ -278,7 +296,7 @@
       document.body.classList.toggle("light");
     }
 
-    function toggleFullscreen() {
+    function goFullScreen() {
       if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen();
       } else {
