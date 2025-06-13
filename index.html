@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>مَهْرَقَانُ الرُّوح</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     :root {
-      --bg-dark: linear-gradient(to bottom, #111b30, #1a2c47);
-      --bg-light: linear-gradient(to bottom, #92b6e3, #c7dbf0);
+      --bg-dark: linear-gradient(to bottom, #0a1124, #0d1a33);
+      --bg-light: linear-gradient(to bottom, #6a92cc, #a0bde4);
       --text-dark: #ffffff;
       --text-light: #0a1124;
     }
@@ -19,7 +19,7 @@
       color: var(--text-dark);
       font-family: 'Arial', sans-serif;
       overflow-x: hidden;
-      transition: background 0.3s ease;
+      transition: all 0.3s ease;
     }
 
     body.light {
@@ -51,7 +51,7 @@
       display: flex;
       justify-content: center;
       gap: 15px;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
       flex-wrap: wrap;
     }
 
@@ -74,9 +74,11 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
+      padding: 0;
       margin: 0 auto;
       width: 100%;
+      scroll-snap-type: y mandatory;
+      gap: 8px;
     }
 
     .image-wrapper {
@@ -84,16 +86,23 @@
       width: 100%;
       max-width: 900px;
       overflow: hidden;
-      border-radius: 10px;
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
-      mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
-      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+      border-radius: 8px;
+      scroll-snap-align: start;
+      mask-image: 
+        linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%),
+        linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+      -webkit-mask-image: 
+        linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%),
+        linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
     }
 
     .image-wrapper img {
       width: 100%;
+      max-width: 100%;
+      object-fit: contain;
+      image-rendering: -webkit-optimize-contrast;
       display: block;
-      border-radius: 6px;
+      border-radius: 8px;
     }
 
     #backToTop {
@@ -108,6 +117,11 @@
       display: none;
       font-weight: bold;
       z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    #backToTop:hover {
+      background: #1a73e8;
     }
 
     #nextChapterBtn {
@@ -128,6 +142,17 @@
 
     #nextChapterBtn button:hover {
       background: #1558b0;
+    }
+
+    @media (max-width: 768px) {
+      #image-container {
+        gap: 2px !important;
+      }
+
+      .image-wrapper {
+        margin-bottom: 2px !important;
+        border-radius: 0;
+      }
     }
   </style>
 </head>
