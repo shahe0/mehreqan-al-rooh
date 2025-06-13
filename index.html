@@ -97,9 +97,20 @@
       image-rendering: -webkit-optimize-contrast;
       display: block;
       border-radius: 8px;
-      box-shadow:
-        0 -30px 40px -30px rgba(0, 0, 0, 0.25),
-        0 30px 40px -30px rgba(0, 0, 0, 0.25);
+    }
+
+    .image-wrapper::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to bottom, rgba(0,0,0,0.4), transparent 60%),
+        linear-gradient(to top, rgba(0,0,0,0.4), transparent 60%),
+        linear-gradient(to right, rgba(0,0,0,0.25), transparent 30%),
+        linear-gradient(to left, rgba(0,0,0,0.25), transparent 30%);
+      z-index: 2;
+      pointer-events: none;
+      mix-blend-mode: overlay;
     }
 
     #backToTop {
@@ -148,6 +159,10 @@
 
       .image-wrapper img {
         border-radius: 0;
+      }
+
+      .image-wrapper::before {
+        display: none;
       }
     }
   </style>
