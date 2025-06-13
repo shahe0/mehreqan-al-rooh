@@ -304,3 +304,38 @@
   </script>
 </body>
 </html>
+<style>
+  .image-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+
+  .image-wrapper img {
+    width: 100%;
+    display: block;
+  }
+
+  .image-wrapper::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to bottom, rgba(0,0,0,0.3), transparent 30%),
+      linear-gradient(to top, rgba(0,0,0,0.3), transparent 30%),
+      linear-gradient(to right, rgba(0,0,0,0.2), transparent 20%),
+      linear-gradient(to left, rgba(0,0,0,0.2), transparent 20%);
+    z-index: 1;
+    pointer-events: none;
+  }
+</style>
+
+<div class="image-wrapper">
+  <img src="https://i.imgur.com/MfRP2zF.jpeg" alt="صفحة">
+</div>
+
+<div class="image-wrapper">
+  <img src="https://i.imgur.com/jXJed1O.jpeg" alt="صفحة">
+</div>
