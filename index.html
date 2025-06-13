@@ -55,7 +55,7 @@
       flex-wrap: wrap;
     }
 
-    select, button.toggle-mode {
+    select, button.toggle-mode, button.fullscreen-btn {
       padding: 6px 12px;
       border-radius: 5px;
       background: #222;
@@ -64,7 +64,7 @@
       cursor: pointer;
     }
 
-    body.light select, body.light .toggle-mode {
+    body.light select, body.light button.toggle-mode, body.light button.fullscreen-btn {
       background: #d0e0f8;
       color: #222;
       border: 1px solid #aaa;
@@ -90,27 +90,6 @@
       scroll-snap-align: start;
     }
 
-    .image-wrapper::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      background: radial-gradient(circle at top left, rgba(0,0,0,0.15), transparent 40%),
-                  radial-gradient(circle at top right, rgba(0,0,0,0.15), transparent 40%),
-                  radial-gradient(circle at bottom left, rgba(0,0,0,0.15), transparent 40%),
-                  radial-gradient(circle at bottom right, rgba(0,0,0,0.15), transparent 40%);
-    }
-
-    .image-wrapper.first::before {
-      background: linear-gradient(to bottom, rgba(0,0,0,0.25), transparent 20%);
-    }
-
-    .image-wrapper.last::before {
-      background: linear-gradient(to top, rgba(0,0,0,0.25), transparent 20%);
-    }
-
     .image-wrapper img {
       width: 100%;
       max-width: 100%;
@@ -118,6 +97,16 @@
       image-rendering: -webkit-optimize-contrast;
       display: block;
       border-radius: 8px;
+    }
+
+    .top-fade {
+      mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 100%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 100%);
+    }
+
+    .bottom-fade {
+      mask-image: linear-gradient(to bottom, black 0%, black 90%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, black 0%, black 90%, transparent 100%);
     }
 
     #backToTop {
@@ -132,6 +121,11 @@
       display: none;
       font-weight: bold;
       z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    #backToTop:hover {
+      background: #1a73e8;
     }
 
     #nextChapterBtn {
@@ -158,6 +152,7 @@
       #image-container {
         gap: 2px !important;
       }
+
       .image-wrapper {
         margin-bottom: 2px !important;
         border-radius: 0;
@@ -180,6 +175,7 @@
       <option value="all" selected>عرض الكل</option>
     </select>
     <button class="toggle-mode" onclick="toggleMode()">تبديل الوضع</button>
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">ملء الشاشة</button>
   </div>
 
   <div id="image-container"></div>
@@ -247,17 +243,27 @@
       const mode = pageModeSelect.value || "all";
       const { pages } = chapters[currentChapter];
 
-      pages.forEach((src, i) => {
+      if (mode === "single") {
         const wrapper = document.createElement("div");
         wrapper.className = "image-wrapper";
-        if (i === 0) wrapper.classList.add("first");
-        if (i === pages.length - 1) wrapper.classList.add("last");
-
         const img = document.createElement("img");
-        img.src = src;
+        img.src = pages[currentIndex];
         wrapper.appendChild(img);
         container.appendChild(wrapper);
-      });
+      } else {
+        pages.forEach((src, i) => {
+          const wrapper = document.createElement("div");
+          wrapper.className = "image-wrapper";
+          const img = document.createElement("img");
+          img.src = src;
+
+          if (i === 0) img.classList.add("top-fade");
+          if (i === pages.length - 1) img.classList.add("bottom-fade");
+
+          wrapper.appendChild(img);
+          container.appendChild(wrapper);
+        });
+      }
 
       chapterTitle.textContent = chapters[currentChapter].title;
       nextBtn.style.display = currentChapter === "ch1" ? "block" : "none";
@@ -270,6 +276,14 @@
 
     function toggleMode() {
       document.body.classList.toggle("light");
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
     }
 
     chapterSelect.addEventListener("change", () => {
