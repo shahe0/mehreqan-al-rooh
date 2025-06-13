@@ -6,8 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     :root {
-      --bg-dark: linear-gradient(to bottom, #141e30, #1e2f47);
-      --bg-light: linear-gradient(to bottom, #aac4e9, #d6e4f6);
+      --bg-dark: linear-gradient(to bottom, #111b30, #1a2c47);
+      --bg-light: linear-gradient(to bottom, #92b6e3, #c7dbf0);
       --text-dark: #ffffff;
       --text-light: #0a1124;
     }
@@ -19,7 +19,7 @@
       color: var(--text-dark);
       font-family: 'Arial', sans-serif;
       overflow-x: hidden;
-      transition: all 0.3s ease;
+      transition: background 0.3s ease;
     }
 
     body.light {
@@ -51,7 +51,7 @@
       display: flex;
       justify-content: center;
       gap: 15px;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       flex-wrap: wrap;
     }
 
@@ -74,16 +74,9 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 0;
+      gap: 4px;
       margin: 0 auto;
       width: 100%;
-      gap: 4px;
-    }
-
-    @media (max-width: 768px) {
-      #image-container {
-        gap: 2px;
-      }
     }
 
     .image-wrapper {
@@ -92,36 +85,15 @@
       max-width: 900px;
       overflow: hidden;
       border-radius: 10px;
-      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.10); /* ظل ناعم */
-      mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
-      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
+      mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
     }
 
     .image-wrapper img {
       width: 100%;
       display: block;
-      border-radius: 10px;
-    }
-
-    #fullscreen-btn {
-      display: none;
-    }
-
-    @media (max-width: 768px) {
-      #fullscreen-btn {
-        position: fixed;
-        bottom: 70px;
-        left: 15px;
-        z-index: 999;
-        background: #1a73e8;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        padding: 10px 16px;
-        font-size: 14px;
-        cursor: pointer;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-      }
+      border-radius: 6px;
     }
 
     #backToTop {
@@ -175,8 +147,6 @@
     </select>
     <button class="toggle-mode" onclick="toggleMode()">تبديل الوضع</button>
   </div>
-
-  <button id="fullscreen-btn" onclick="enterFullscreen()">ملء الشاشة</button>
 
   <div id="image-container"></div>
 
@@ -272,13 +242,6 @@
 
     function toggleMode() {
       document.body.classList.toggle("light");
-    }
-
-    function enterFullscreen() {
-      const el = document.documentElement;
-      if (el.requestFullscreen) el.requestFullscreen();
-      else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-      else if (el.msRequestFullscreen) el.msRequestFullscreen();
     }
 
     chapterSelect.addEventListener("change", () => {
