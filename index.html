@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>مَهْرَقَانُ الرُّوح</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     :root {
-      --bg-dark: linear-gradient(to bottom, #0a1124, #0d1a33);
-      --bg-light: linear-gradient(to bottom, #6a92cc, #a0bde4);
+      --bg-dark: linear-gradient(to bottom, #141e30, #1e2f47);
+      --bg-light: linear-gradient(to bottom, #8cb8f0, #c0d8f8);
       --text-dark: #ffffff;
       --text-light: #0a1124;
     }
@@ -77,8 +77,13 @@
       padding: 0;
       margin: 0 auto;
       width: 100%;
-      scroll-snap-type: y mandatory;
-      gap: 8px;
+      gap: 8px; /* desktop spacing */
+    }
+
+    @media (max-width: 768px) {
+      #image-container {
+        gap: 2px; /* mobile spacing reduced */
+      }
     }
 
     .image-wrapper {
@@ -86,21 +91,14 @@
       width: 100%;
       max-width: 900px;
       overflow: hidden;
-      border-radius: 8px;
-      scroll-snap-align: start;
-      mask-image: 
-        linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%),
-        linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
-      -webkit-mask-image: 
-        linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%),
-        linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+      border-radius: 10px;
+      box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+      mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
     }
 
     .image-wrapper img {
       width: 100%;
-      max-width: 100%;
-      object-fit: contain;
-      image-rendering: -webkit-optimize-contrast;
       display: block;
       border-radius: 8px;
     }
@@ -117,11 +115,6 @@
       display: none;
       font-weight: bold;
       z-index: 1000;
-      transition: all 0.3s ease;
-    }
-
-    #backToTop:hover {
-      background: #1a73e8;
     }
 
     #nextChapterBtn {
@@ -142,17 +135,6 @@
 
     #nextChapterBtn button:hover {
       background: #1558b0;
-    }
-
-    @media (max-width: 768px) {
-      #image-container {
-        gap: 2px !important;
-      }
-
-      .image-wrapper {
-        margin-bottom: 2px !important;
-        border-radius: 0;
-      }
     }
   </style>
 </head>
