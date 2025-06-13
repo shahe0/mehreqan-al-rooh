@@ -55,7 +55,7 @@
       flex-wrap: wrap;
     }
 
-    select, button.toggle-mode, button.toggle-fullscreen {
+    select, button.toggle-mode, button.fullscreen-btn {
       padding: 6px 12px;
       border-radius: 5px;
       background: #222;
@@ -64,9 +64,7 @@
       cursor: pointer;
     }
 
-    body.light select,
-    body.light .toggle-mode,
-    body.light .toggle-fullscreen {
+    body.light select, body.light button.toggle-mode, body.light button.fullscreen-btn {
       background: #d0e0f8;
       color: #222;
       border: 1px solid #aaa;
@@ -90,12 +88,6 @@
       overflow: hidden;
       border-radius: 8px;
       scroll-snap-align: start;
-      mask-image:
-        linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%),
-        linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
-      -webkit-mask-image:
-        linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%),
-        linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
     }
 
     .image-wrapper img {
@@ -105,6 +97,16 @@
       image-rendering: -webkit-optimize-contrast;
       display: block;
       border-radius: 8px;
+    }
+
+    .top-fade {
+      mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 100%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 100%);
+    }
+
+    .bottom-fade {
+      mask-image: linear-gradient(to bottom, black 0%, black 90%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, black 0%, black 90%, transparent 100%);
     }
 
     #backToTop {
@@ -173,7 +175,7 @@
       <option value="all" selected>عرض الكل</option>
     </select>
     <button class="toggle-mode" onclick="toggleMode()">تبديل الوضع</button>
-    <button class="toggle-fullscreen" onclick="toggleFullScreen()">ملء الشاشة</button>
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">ملء الشاشة</button>
   </div>
 
   <div id="image-container"></div>
@@ -249,11 +251,15 @@
         wrapper.appendChild(img);
         container.appendChild(wrapper);
       } else {
-        pages.forEach(src => {
+        pages.forEach((src, i) => {
           const wrapper = document.createElement("div");
           wrapper.className = "image-wrapper";
           const img = document.createElement("img");
           img.src = src;
+
+          if (i === 0) img.classList.add("top-fade");
+          if (i === pages.length - 1) img.classList.add("bottom-fade");
+
           wrapper.appendChild(img);
           container.appendChild(wrapper);
         });
@@ -272,7 +278,7 @@
       document.body.classList.toggle("light");
     }
 
-    function toggleFullScreen() {
+    function toggleFullscreen() {
       if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen();
       } else {
