@@ -55,7 +55,7 @@
       flex-wrap: wrap;
     }
 
-    select, button.toggle-mode, button.fullscreen {
+    select, button.toggle-mode {
       padding: 6px 12px;
       border-radius: 5px;
       background: #222;
@@ -88,18 +88,27 @@
       overflow: hidden;
       border-radius: 8px;
       scroll-snap-align: start;
-      mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
-      -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
     }
 
-    .image-wrapper.first {
-      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.03) 0%, black 8%, black 100%);
-      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.03) 0%, black 8%, black 100%);
+    .image-wrapper::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      background: radial-gradient(circle at top left, rgba(0,0,0,0.15), transparent 40%),
+                  radial-gradient(circle at top right, rgba(0,0,0,0.15), transparent 40%),
+                  radial-gradient(circle at bottom left, rgba(0,0,0,0.15), transparent 40%),
+                  radial-gradient(circle at bottom right, rgba(0,0,0,0.15), transparent 40%);
     }
 
-    .image-wrapper.last {
-      mask-image: linear-gradient(to top, rgba(0,0,0,0.03) 0%, black 8%, black 100%);
-      -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.03) 0%, black 8%, black 100%);
+    .image-wrapper.first::before {
+      background: linear-gradient(to bottom, rgba(0,0,0,0.25), transparent 20%);
+    }
+
+    .image-wrapper.last::before {
+      background: linear-gradient(to top, rgba(0,0,0,0.25), transparent 20%);
     }
 
     .image-wrapper img {
@@ -123,11 +132,6 @@
       display: none;
       font-weight: bold;
       z-index: 1000;
-      transition: all 0.3s ease;
-    }
-
-    #backToTop:hover {
-      background: #1a73e8;
     }
 
     #nextChapterBtn {
@@ -154,7 +158,6 @@
       #image-container {
         gap: 2px !important;
       }
-
       .image-wrapper {
         margin-bottom: 2px !important;
         border-radius: 0;
@@ -177,7 +180,6 @@
       <option value="all" selected>عرض الكل</option>
     </select>
     <button class="toggle-mode" onclick="toggleMode()">تبديل الوضع</button>
-    <button class="fullscreen" onclick="goFullScreen()">ملء الشاشة</button>
   </div>
 
   <div id="image-container"></div>
@@ -245,25 +247,17 @@
       const mode = pageModeSelect.value || "all";
       const { pages } = chapters[currentChapter];
 
-      if (mode === "single") {
+      pages.forEach((src, i) => {
         const wrapper = document.createElement("div");
         wrapper.className = "image-wrapper";
+        if (i === 0) wrapper.classList.add("first");
+        if (i === pages.length - 1) wrapper.classList.add("last");
+
         const img = document.createElement("img");
-        img.src = pages[currentIndex];
+        img.src = src;
         wrapper.appendChild(img);
         container.appendChild(wrapper);
-      } else {
-        pages.forEach((src, i) => {
-          const wrapper = document.createElement("div");
-          wrapper.className = "image-wrapper";
-          if (i === 0) wrapper.classList.add("first");
-          if (i === pages.length - 1) wrapper.classList.add("last");
-          const img = document.createElement("img");
-          img.src = src;
-          wrapper.appendChild(img);
-          container.appendChild(wrapper);
-        });
-      }
+      });
 
       chapterTitle.textContent = chapters[currentChapter].title;
       nextBtn.style.display = currentChapter === "ch1" ? "block" : "none";
@@ -276,14 +270,6 @@
 
     function toggleMode() {
       document.body.classList.toggle("light");
-    }
-
-    function goFullScreen() {
-      if (document.fullscreenElement) {
-        document.exitFullscreen();
-      } else {
-        document.documentElement.requestFullscreen();
-      }
     }
 
     chapterSelect.addEventListener("change", () => {
